@@ -1,0 +1,67 @@
+Listing of compilation of file /home/davd/clisp/be-it/src/main.lisp
+on 2019-08-06 20:29:28 by CLISP, version 2.49.92 (2018-02-18) (built on lgw01-amd64-035.buildd [127.0.1.1])
+;; Compiling file /home/davd/clisp/be-it/src/main.lisp ...
+
+Disassembly of function #:|1 2 (DEFPACKAGE BE-IT (:USE :CL))-1-1|
+(CONST 0) = "BE-IT"
+0 required arguments
+0 optional arguments
+No rest parameter
+No keyword parameters
+5 byte-code instructions:
+0     (CONST&PUSH 0)                      ; "BE-IT"
+1     (PUSH-NIL 4)
+3     (CALLS1 240)                        ; SYSTEM::%IN-PACKAGE
+5     (VALUES0)
+6     (SKIP&RET 1)
+
+Disassembly of function #:|1 2 (DEFPACKAGE BE-IT (:USE :CL))-1-2|
+(CONST 0) = ("COMMON-LISP")
+(CONST 1) = "BE-IT"
+0 required arguments
+0 optional arguments
+No rest parameter
+No keyword parameters
+5 byte-code instructions:
+0     (CONST&PUSH 0)                      ; ("COMMON-LISP")
+1     (CONST&PUSH 1)                      ; "BE-IT"
+2     (CALLS1 236)                        ; USE-PACKAGE
+4     (VALUES0)
+5     (SKIP&RET 1)
+
+Disassembly of function #:|1 2 (DEFPACKAGE BE-IT (:USE :CL))-1-3|
+(CONST 0) = "BE-IT"
+0 required arguments
+0 optional arguments
+No rest parameter
+No keyword parameters
+3 byte-code instructions:
+0     (CONST&PUSH 0)                      ; "BE-IT"
+1     (CALLS1 217)                        ; FIND-PACKAGE
+3     (SKIP&RET 1)
+
+Disassembly of function #:|3 3 (IN-PACKAGE :BE-IT)-2|
+(CONST 0) = "BE-IT"
+(CONST 1) = *PACKAGE*
+0 required arguments
+0 optional arguments
+No rest parameter
+No keyword parameters
+writes special variable: *PACKAGE*
+4 byte-code instructions:
+0     (CONST&PUSH 0)                      ; "BE-IT"
+1     (CALLS1 246)                        ; SYSTEM::%FIND-PACKAGE
+3     (SETVALUE 1)                        ; *PACKAGE*
+5     (SKIP&RET 1)
+
+Disassembly of function #:|5 7 (LOAD "~/quicklisp/setup.lisp")-3|
+(CONST 0) = "~/quicklisp/setup.lisp"
+(CONST 1) = LOAD
+0 required arguments
+0 optional arguments
+No rest parameter
+No keyword parameters
+3 byte-code instructions:
+0     (CONST&PUSH 0)                      ; "~/quicklisp/setup.lisp"
+1     (CALL1 1)                           ; LOAD
+3     (SKIP&RET 1)
