@@ -1,5 +1,23 @@
 * Be-It 
 
-** Usage
+** Description
+  
+The project's name refers to various concepts that are important to me.
 
-** Installation
+*** Be
+
+    Everyone sees life differently. **Being** is for me the first pillar of our
+    life. We name ourselves living beings. Should we live for doing things or for
+    being something, someone? Are we living beings or living doings?
+    
+*** IT
+
+    Well this one is obvious: just Information Technology. But it's also nice to put
+    it after the verb **Be** as in "Be it!".
+
+** Usage
+   
+   Simply call the [[file:deploy.sh][Deploy script]].
+   There is no parameters yet, it's not finished... Actually the Lisp script needs
+   to be parameterized as well so that the destination cv html file can be changed
+   before execution.
