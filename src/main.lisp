@@ -5,9 +5,37 @@
 ;; LOAD EVERYTHING
 
 (load "~/quicklisp/setup.lisp")
+(ql:quickload "unix-opts")
+(ql:quickload "fset")
 (ql:quickload "spinneret")
 (require "spinneret")
 (use-package :spinneret)
+
+;; DEFINE COMMAND ARGUMENTS
+
+(opts:define-opts
+  (:name :help
+   :description "Some help here needed. TODO"
+   :short #\h
+   :long "help"))
+
+;; TODO
+;; The parameters that we'd be interested for are the following:
+;;  - the language of the page... although we could as well generate as many html files that
+;;    we have from languages
+;;  - the path of the output directory to which the html files should be created
+
+;; READ PROPERTIES FILE
+
+(defvar properties (fset:empty-map))
+(let ((in (open "./resources/lang.en.properties" :if-does-not-exist nil)))
+  (when in
+    (loop for line = (read-line in nil)
+          while line
+          do (let ((split-line (split-sequence:split-sequence #\= line)))
+               (setq properties (fset:with properties
+                                           (first split-line)
+                                           (second split-line)))))))
 
 ;; DEFINE WEB PAGE COMPONENTS
 
@@ -41,64 +69,39 @@
                 (:font-size "1.5em"))
        ,@body))))
 
+(deftag work-experience (title text)
+  `(:div.card
+    (:h1 ,title)
+    (:p ,text)))
+
 (defun index ()
   (with-page (:title *page-title*)
     (:section
      (:img
-      :style (css
-              (:width "200px")
-              (:float "left")
-              (:margin "0 50px 20px 20px")
-              (:border-radius "50%")
-              (:border "0")
-              (:box-shadow "1px 1px 5px black"))
+      :class "cv-img"
       :src "./resources/images/my.jpg"
-      :alt "me in an image"))
-    (:div
-     (:header
-      (:h1 "David Rueda")
-      (:h2 "IT Engineer")
-      (:section
-       (:h1 "Programming should open people's mind.")
-       (:p "I am a free software lover. I have been using free software practically my whole life, and although I liked it a lot, I began a few months ago to really understand their potential to create an open-minded and productive society."))
-      (:section
-       (:h1 "My Experience")
-       (:section.experience
-        (:h1.title "Amerbank")))
-      (:footer "Contact me: davd33@gmail.com")))))
-
-;; Let's define a macro that looks like this:
-;; (csslet
-;;  (exp "section.experience"
-;;       (exp.title "h1.title"))
-;;  (format nil "inner block = ~a" exp.title))
-;; ;; And then expands to that:
-;; (let ((exp "section.experience")
-;;       (exp.title "section.experience h1.title"))
-;;   (format nil "inner block = ~a" exp.title))
-;; How should we do?
-;; (defmacro csslet (&body lets)
-;;   (loop for (lsymbol lvalue &rest inner-lets) in lets
-;;         collect `(let ())))             ;TODO finish this...
-
-;; (defun css4file ()
-;;   (let ((section-exp-block "section.experience")
-;;         (exp-1-title (concat section-exp-block "h1.title")))
-;;     (concatenate 'string
-;;                  (css-block exp-1-title
-;;                             (css
-;;                               (:font-size "2em")))
-;;                  (css-block section-exp-block
-;;                             (css
-;;                               (:background "lightgray"))))))
-
-;; WRITES CSS TO FILE
-;; (with-open-file (css-file "./resources/css/cv.css" :direction :output
-;;                                                    :if-exists :supersede)
-;;   (format css-file (css4file)))
+      :alt (fset:@ properties "cv.pic.img.alt")))
+    (:header                           ; CV TITLE - MY NAME BASICALLY...
+     (:h1 (fset:@ properties "cv.title")))
+    (:section                         ; ABOUT ME
+     (:h1 (fset:@ properties "about.me"))
+     (:p (fset:@ properties "about.me.txt.p1"))
+     (:p (fset:@ properties "about.me.txt.p2")))
+    (:section                         ; WORK EXPERIENCE
+     (work-experience
+       "EXP - YY"
+       "Hello I'm here"))
+    (:footer
+     (:a
+      :href "mailto:davd33@gmail.com"
+      "Contact me: davd33@gmail.com"))))
 
 ;; WRITES CV TO HTML FILE
-(with-open-file (cv-file "/mnt/linode/my/var/www/localhost/htdocs/index.html" :direction :output
-                                        :if-exists :supersede)
+;; /mnt/linode/my/var/www/localhost/htdocs/ <- for my linode server - locally mounted
+(with-open-file (cv-file "/home/davd/clisp/be-it/src/my-cv.html" :direction :output
+                                                                 :if-exists :supersede)
   (let ((*html* cv-file))
     (index)))
+
+;; exit program
+;; (sb-ext:exit)

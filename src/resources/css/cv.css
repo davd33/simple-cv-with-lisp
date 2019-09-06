@@ -1,0 +1,16 @@
+.cv-img {
+    width: 200px;
+    float: left;
+    margin: 0 50px 20px 20px;
+    border-radius: 50%;
+    border: 0;
+    box-shadow: 1px 1px 5px black;
+}
+
+.card {
+    margin: 25px;
+    padding: 20px;
+    box-shadow: 1px 1px 0 black;
+    border-radius: 5px;
+    border: 2px solid;
+}
