@@ -25,17 +25,27 @@
 ;;    we have from languages
 ;;  - the path of the output directory to which the html files should be created
 
-;; READ PROPERTIES FILE
+;; SETUP LOCALIZATION
 
-(defvar properties (fset:empty-map))
-(let ((in (open "./resources/lang.en.properties" :if-does-not-exist nil)))
-  (when in
-    (loop for line = (read-line in nil)
-          while line
-          do (let ((split-line (split-sequence:split-sequence #\= line)))
-               (setq properties (fset:with properties
-                                           (first split-line)
-                                           (second split-line)))))))
+(defun read-property-file (property-file-path)
+  (let* ((in (open property-file-path :if-does-not-exist nil))
+         (property-file-lines
+           (when in
+             (loop for line = (read-line in nil)
+                   while line collect line))))
+    (reduce #'(lambda (properties-map line)
+                (let ((split-line (split-sequence:split-sequence #\= line)))
+                  (fset:with properties-map
+                             (first split-line)
+                             (second split-line))))
+            property-file-lines
+            :initial-value (fset:empty-map))))
+
+(defparameter lang (read-property-file "./resources/lang.en.properties"))
+
+(defun lang-get (key)
+  "Get the translation for the given key."
+  (fset:@ lang key))
 
 ;; DEFINE WEB PAGE COMPONENTS
 
@@ -69,7 +79,7 @@
                 (:font-size "1.5em"))
        ,@body))))
 
-(deftag work-experience (title text)
+(deftag work-experience (text attrs &key title)
   `(:div.card
     (:h1 ,title)
     (:p ,text)))
@@ -80,16 +90,16 @@
      (:img
       :class "cv-img"
       :src "./resources/images/my.jpg"
-      :alt (fset:@ properties "cv.pic.img.alt")))
-    (:header                           ; CV TITLE - MY NAME BASICALLY...
-     (:h1 (fset:@ properties "cv.title")))
-    (:section                         ; ABOUT ME
-     (:h1 (fset:@ properties "about.me"))
-     (:p (fset:@ properties "about.me.txt.p1"))
-     (:p (fset:@ properties "about.me.txt.p2")))
-    (:section                         ; WORK EXPERIENCE
+      :alt (lang-get "cv.pic.img.alt")))
+    (:header                            ; CV TITLE - MY NAME BASICALLY...
+     (:h1 (lang-get "cv.title")))
+    (:section                           ; ABOUT ME
+     (:h1 (lang-get "about.me"))
+     (:p.about-me (lang-get "about.me.txt.p1"))
+     (:p.about-me (lang-get "about.me.txt.p2")))
+    (:section                           ; WORK EXPERIENCE
      (work-experience
-       "EXP - YY"
+       :title "Experience 1"
        "Hello I'm here"))
     (:footer
      (:a
