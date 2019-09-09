@@ -29,15 +29,28 @@
 
 (defun read-property-file (property-file-path)
   (let* ((in (open property-file-path :if-does-not-exist nil))
-         (property-file-lines
-           (when in
-             (loop for line = (read-line in nil)
-                   while line collect line))))
+         (property-file-lines (when in
+                                (loop for line = (read-line in nil)
+                                      while line collect line))))
     (reduce #'(lambda (properties-map line)
-                (let ((split-line (split-sequence:split-sequence #\= line)))
-                  (fset:with properties-map
-                             (first split-line)
-                             (second split-line))))
+                (let* ((split-line (split-sequence:split-sequence #\= line))
+                       (key_index (split-sequence:split-sequence #\_ (first split-line))) ; in the case of multiple key/val indexed translations
+                       (key (first key_index))
+                       (index (parse-integer (or (second key_index) "NaN") :junk-allowed t))
+                       (value (second split-line)))
+                  (format t "key / index / value = ~a / ~a / ~a ~%" key index value)
+                  (if index ; the translation should be part of a split sequence of strings
+                      (fset:with properties-map
+                                 key
+                                 (if (fset:@ properties-map key) ; it's not the first string of this translation key
+                                     (fset:with (fset:@ properties-map
+                                                        key)
+                                                index
+                                                value)
+                                     (fset:seq value)))
+                      (fset:with properties-map
+                                 key
+                                 value))))
             property-file-lines
             :initial-value (fset:empty-map))))
 
@@ -84,6 +97,21 @@
     (:h1 ,title)
     (:p ,text)))
 
+(deftag repeat (template attrs &key for-lang)
+  "This is a tag that repeats a given template using the key
+   for a translation split into a list of several strings.
+     - lang-binding-form: 2 elements list with var name and translation key
+     - template: a single form (one list of potentially embedded tags)"
+  (let ((lang-var-name (first for-lang))
+        (lang-key (second for-lang)))
+    (fset:reduce #'(lambda (tag-product translation-value)
+                     (append
+                      tag-product
+                      `((let ((,lang-var-name ,translation-value))
+                          ,@template))))
+                 (lang-get lang-key)
+                 :initial-value `(:div))))
+
 (defun index ()
   (with-page (:title *page-title*)
     (:section
@@ -95,16 +123,19 @@
      (:h1 (lang-get "cv.title")))
     (:section                           ; ABOUT ME
      (:h1 (lang-get "about.me"))
-     (:p.about-me (lang-get "about.me.txt.p1"))
-     (:p.about-me (lang-get "about.me.txt.p2")))
+     (repeat
+       :for-lang (about-me "about.me.txt.p")
+       (:p.about-me about-me)))
     (:section                           ; WORK EXPERIENCE
      (work-experience
        :title "Experience 1"
        "Hello I'm here"))
     (:footer
-     (:a
-      :href "mailto:davd33@gmail.com"
-      "Contact me: davd33@gmail.com"))))
+     (:p
+      "Contact me: "
+      (:a
+       :href "mailto:davd33@gmail.com"
+       "davd33@gmail.com")))))
 
 ;; WRITES CV TO HTML FILE
 ;; /mnt/linode/my/var/www/localhost/htdocs/ <- for my linode server - locally mounted

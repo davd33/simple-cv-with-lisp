@@ -13,8 +13,10 @@
     box-shadow: 1px 1px 0 black;
     border-radius: 5px;
     border: 2px solid;
+    clear: both;
 }
 
 p.about-me {
     text-align: justify;
+    font-style: italic;
 }
