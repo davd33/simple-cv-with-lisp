@@ -14,6 +14,11 @@
     border-radius: 5px;
     border: 2px solid;
     clear: both;
+    max-width: 300px;
+}
+
+.work-exp-cards {
+    display: flex;
 }
 
 p.about-me {

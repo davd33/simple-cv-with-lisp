@@ -38,7 +38,6 @@
                        (key (first key_index))
                        (index (parse-integer (or (second key_index) "NaN") :junk-allowed t))
                        (value (second split-line)))
-                  (format t "key / index / value = ~a / ~a / ~a ~%" key index value)
                   (if index ; the translation should be part of a split sequence of strings
                       (fset:with properties-map
                                  key
@@ -92,10 +91,12 @@
                 (:font-size "1.5em"))
        ,@body))))
 
-(deftag work-experience (text attrs &key title)
+(deftag work-experience (body attrs &key title duration desc)
   `(:div.card
     (:h1 ,title)
-    (:p ,text)))
+    (:em ,duration)
+    (:p ,desc)
+    ,@body))
 
 (deftag repeat (template attrs &key for-lang)
   "This is a tag that repeats a given template using the key
@@ -110,7 +111,7 @@
                       `((let ((,lang-var-name ,translation-value))
                           ,@template))))
                  (lang-get lang-key)
-                 :initial-value `(:div))))
+                 :initial-value `(progn))))
 
 (defun index ()
   (with-page (:title *page-title*)
@@ -120,16 +121,23 @@
       :src "./resources/images/my.jpg"
       :alt (lang-get "cv.pic.img.alt")))
     (:header                            ; CV TITLE - MY NAME BASICALLY...
-     (:h1 (lang-get "cv.title")))
+     (:h1 (lang-get "cv.title"))
+     (:h2 (lang-get "cv.sub-title")))
     (:section                           ; ABOUT ME
-     (:h1 (lang-get "about.me"))
      (repeat
        :for-lang (about-me "about.me.txt.p")
        (:p.about-me about-me)))
-    (:section                           ; WORK EXPERIENCE
-     (work-experience
-       :title "Experience 1"
-       "Hello I'm here"))
+    (:section.work-exp-cards            ; WORK EXPERIENCE
+     (repeat
+       :for-lang (my-exps "work.experience")
+       (let* ((my-exps-l (split-sequence:split-sequence #\; my-exps))
+              (work-title (nth 0 my-exps-l))
+              (work-desc (nth 1 my-exps-l))
+              (work-duration (nth 2 my-exps-l)))
+         (work-experience
+           :title work-title
+           :duration work-duration
+           :desc work-desc))))
     (:footer
      (:p
       "Contact me: "
