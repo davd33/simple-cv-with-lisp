@@ -128,6 +128,7 @@
        (link :href (concat "mailto:" my-mail) my-mail))
      (link :href (lang-get "contact.github") "Github")
      (link :href (lang-get "contact.linkedin") "Linkedin")
+     (link :href (lang-get "contact.fork-project") "Fork me!")
      (:section.lang-flags
       (:em "Speaks: Fr / En / Sp / De")))
     (:section                           ; PICTURE
