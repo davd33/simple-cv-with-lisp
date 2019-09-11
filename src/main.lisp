@@ -123,14 +123,14 @@
 
 (defun index ()
   (with-page (:title *page-title*)
-    (:section.contact
+    (:section.contact                   ; CONTACT & LANG
      (let ((my-mail (lang-get "contact.mail")))
        (link :href (concat "mailto:" my-mail) my-mail))
      (link :href (lang-get "contact.github") "Github")
      (link :href (lang-get "contact.linkedin") "Linkedin")
      (:section.lang-flags
       (:em "Speaks: Fr / En / Sp / De")))
-    (:section
+    (:section                           ; PICTURE
      (:img
       :class "cv-img"
       :src "./resources/images/my.jpg"
@@ -154,11 +154,12 @@
            :technologies work-techs))))))
 
 ;; WRITES CV TO HTML FILE
-;; /mnt/linode/my/var/www/localhost/htdocs/ <- for my linode server - locally mounted
-(with-open-file (cv-file "/home/davd/clisp/be-it/src/my-cv.html" :direction :output
-                                                                 :if-exists :supersede)
-  (let ((*html* cv-file))
-    (index)))
+(let ((linode-html-file-path "/mnt/linode/my/var/www/localhost/htdocs/index.html")
+      (project-html-file-path "/home/davd/clisp/be-it/src/my-cv.html"))
+  (with-open-file (cv-file project-html-file-path :direction :output
+                                                  :if-exists :supersede)
+    (let ((*html* cv-file))
+      (index))))
 
-;; exit program
+;; exit program - that doesn't work yet... TODO
 ;; (sb-ext:exit)
