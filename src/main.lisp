@@ -91,11 +91,14 @@
                 (:font-size "1.5em"))
        ,@body))))
 
-(deftag work-experience (body attrs &key title duration desc)
+(deftag work-experience (body attrs &key title duration desc technologies)
   `(:div.card
     (:h1 ,title)
     (:em ,duration)
     (:p ,desc)
+    (:div.card-tags
+     (loop for tech in ,technologies
+           collect (:div.card-tag tech)))
     ,@body))
 
 (deftag repeat (template attrs &key for-lang)
@@ -113,8 +116,20 @@
                  (lang-get lang-key)
                  :initial-value `(progn))))
 
+(deftag link (text attrs &key href)
+  `(:a.contact-link
+    :href ,href
+    ,@text))
+
 (defun index ()
   (with-page (:title *page-title*)
+    (:section.contact
+     (let ((my-mail (lang-get "contact.mail")))
+       (link :href (concat "mailto:" my-mail) my-mail))
+     (link :href (lang-get "contact.github") "Github")
+     (link :href (lang-get "contact.linkedin") "Linkedin")
+     (:section.lang-flags
+      (:em "Speaks: Fr / En / Sp / De")))
     (:section
      (:img
       :class "cv-img"
@@ -130,20 +145,13 @@
     (:section.work-exp-cards            ; WORK EXPERIENCE
      (repeat
        :for-lang (my-exps "work.experience")
-       (let* ((my-exps-l (split-sequence:split-sequence #\; my-exps))
-              (work-title (nth 0 my-exps-l))
-              (work-desc (nth 1 my-exps-l))
-              (work-duration (nth 2 my-exps-l)))
+       (destructuring-bind (work-title work-desc work-duration &rest work-techs)
+           (split-sequence:split-sequence #\; my-exps)
          (work-experience
            :title work-title
            :duration work-duration
-           :desc work-desc))))
-    (:footer
-     (:p
-      "Contact me: "
-      (:a
-       :href "mailto:davd33@gmail.com"
-       "davd33@gmail.com")))))
+           :desc work-desc
+           :technologies work-techs))))))
 
 ;; WRITES CV TO HTML FILE
 ;; /mnt/linode/my/var/www/localhost/htdocs/ <- for my linode server - locally mounted

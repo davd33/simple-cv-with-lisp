@@ -14,14 +14,45 @@
     border-radius: 5px;
     border: 2px solid;
     clear: both;
-    max-width: 300px;
+    min-width: 300px;
+    width: 300px;
+}
+
+.card-tags {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.card-tag {
+    margin: 5px;
+    padding: 5px;
+    background: beige;
+    border-radius: 5px;
 }
 
 .work-exp-cards {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 p.about-me {
     text-align: justify;
     font-style: italic;
+}
+
+.contact {
+    margin: 20px 0;
+    margin-bottom: 50px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.contact-link {
+    margin: 0 10px;
+    color: #222;
+}
+
+.lang-flags {
+    margin-left: auto;
 }
