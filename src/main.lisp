@@ -46,8 +46,8 @@
   `(concatenate 'string ,@body))
 
 (defmacro css (&body styles)
-  "Takes a n CSS instructions as two elements lists, then returns a css formatted string.
-   A CSS command looks like this: (:font-size <string>)"
+  "Takes 1..n CSS instructions as 2-elements lists, then returns a css formatted string.
+   A CSS instruction list looks like this: (:font-size <string>)"
   `(concatenate 'string
                 ,@(loop for style in styles
                         collect `(format nil "~a: ~a;~%" ,(string (first style)) ,(second style)))))
