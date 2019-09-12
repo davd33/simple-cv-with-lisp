@@ -2,7 +2,7 @@
   (:use :cl))
 (in-package :be-it)
 
-;; LOAD EVERYTHING
+;; LOAD EVERYTHING TODO Do better than this...
 
 (load "~/quicklisp/setup.lisp")
 (ql:quickload "unix-opts")
@@ -15,7 +15,7 @@
 
 (opts:define-opts
   (:name :help
-   :description "Some help here needed. TODO"
+   :description "Some help here needed." ; TODO manage program arguments.
    :short #\h
    :long "help"))
 
@@ -27,37 +27,16 @@
 
 ;; SETUP LOCALIZATION
 
-(defun read-property-file (property-file-path)
-  (let* ((in (open property-file-path :if-does-not-exist nil))
-         (property-file-lines (when in
-                                (loop for line = (read-line in nil)
-                                      while line collect line))))
-    (reduce #'(lambda (properties-map line)
-                (let* ((split-line (split-sequence:split-sequence #\= line))
-                       (key_index (split-sequence:split-sequence #\_ (first split-line))) ; in the case of multiple key/val indexed translations
-                       (key (first key_index))
-                       (index (parse-integer (or (second key_index) "NaN") :junk-allowed t))
-                       (value (second split-line)))
-                  (if index ; the translation should be part of a split sequence of strings
-                      (fset:with properties-map
-                                 key
-                                 (if (fset:@ properties-map key) ; it's not the first string of this translation key
-                                     (fset:with (fset:@ properties-map
-                                                        key)
-                                                index
-                                                value)
-                                     (fset:seq value)))
-                      (fset:with properties-map
-                                 key
-                                 value))))
-            property-file-lines
-            :initial-value (fset:empty-map))))
+(defun read-lang-lisp (file-path)
+  (with-open-file (in file-path)
+    (with-standard-io-syntax
+      (read in))))
 
-(defparameter lang (read-property-file "./resources/lang.en.properties"))
+(defparameter lang (read-lang-lisp "/home/davd/clisp/be-it/src/lang.en.lisp"))
 
 (defun lang-get (key)
   "Get the translation for the given key."
-  (fset:@ lang key))
+  (getf lang key))
 
 ;; DEFINE WEB PAGE COMPONENTS
 
@@ -78,22 +57,24 @@
 
 (defmacro with-page ((&key title) &body body)
   `(with-html
-     (:doctype)
+       (:doctype)
      (:html
       (:head
        (:link :href "./resources/css/cv.css" :rel "stylesheet" :type "text/css")
        (:title ,title))
       (:body
-       :style (css
-                (:width "80vw")
-                (:max-width "1000px")
-                (:margin "auto")
-                (:font-size "1.5em"))
        ,@body))))
 
-(deftag work-experience (body attrs &key title duration desc technologies)
+(deftag link (text attrs &key href class)
+  `(:a.contact-link
+    :class ,class
+    :href ,href
+    ,@text))
+
+(deftag work-experience (body attrs &key title duration desc technologies ref)
   `(:div.card
-    (:h1 ,title)
+    (:h1 ,title
+         (when ref (link :class "work-reference" :href ref "SEE REFERENCE")))
     (:em ,duration)
     (:p ,desc)
     (:div.card-tags
@@ -108,51 +89,48 @@
      - template: a single form (one list of potentially embedded tags)"
   (let ((lang-var-name (first for-lang))
         (lang-key (second for-lang)))
-    (fset:reduce #'(lambda (tag-product translation-value)
-                     (append
-                      tag-product
-                      `((let ((,lang-var-name ,translation-value))
-                          ,@template))))
-                 (lang-get lang-key)
-                 :initial-value `(progn))))
-
-(deftag link (text attrs &key href)
-  `(:a.contact-link
-    :href ,href
-    ,@text))
+    (reduce #'(lambda (tag-product translation-value)
+                (append
+                 tag-product
+                 `((let ((,lang-var-name ,translation-value))
+                     ,@template))))
+            (lang-get lang-key)
+            :initial-value `(progn))))
 
 (defun index ()
   (with-page (:title *page-title*)
     (:section.contact                   ; CONTACT & LANG
-     (let ((my-mail (lang-get "contact.mail")))
+     (let ((my-mail (lang-get :contact.mail)))
        (link :href (concat "mailto:" my-mail) my-mail))
-     (link :href (lang-get "contact.github") "Github")
-     (link :href (lang-get "contact.linkedin") "Linkedin")
-     (link :href (lang-get "contact.fork-project") "Fork me!")
+     (link :href (lang-get :contact.github) "Github")
+     (link :href (lang-get :contact.linkedin) "Linkedin")
+     (link :href (lang-get :contact.fork-project) "Fork me!")
      (:section.lang-flags
       (:em "Speaks: Fr / En / Sp / De")))
-    (:section                           ; PICTURE
+    (:header.centered                   ; CV TITLE - MY NAME BASICALLY...
      (:img
       :class "cv-img"
       :src "./resources/images/my.jpg"
-      :alt (lang-get "cv.pic.img.alt")))
-    (:header                            ; CV TITLE - MY NAME BASICALLY...
-     (:h1 (lang-get "cv.title"))
-     (:h2 (lang-get "cv.sub-title")))
-    (:section                           ; ABOUT ME
-     (repeat
-       :for-lang (about-me "about.me.txt.p")
-       (:p.about-me about-me)))
+      :alt (lang-get :cv.pic.img.alt))
+     (:h1 (lang-get :cv.title))
+     (:h2 (lang-get :cv.sub-title))
+     (:section                          ; ABOUT ME
+      (repeat
+        :for-lang (about-me :about.me.txt.p)
+        (:p.about-me about-me))))
+    (:h1.work-exp-section-title "Work Experiences")
     (:section.work-exp-cards            ; WORK EXPERIENCE
      (repeat
-       :for-lang (my-exps "work.experience")
-       (destructuring-bind (work-title work-desc work-duration &rest work-techs)
-           (split-sequence:split-sequence #\; my-exps)
+       :for-lang (my-exps :work.experience)
+       (destructuring-bind (&key title ref company desc duration technologies)
+           my-exps
          (work-experience
-           :title work-title
-           :duration work-duration
-           :desc work-desc
-           :technologies work-techs))))))
+           :title title
+           :ref ref
+           :company company
+           :duration duration
+           :desc desc
+           :technologies technologies))))))
 
 ;; WRITES CV TO HTML FILE
 (let ((linode-html-file-path "/mnt/linode/my/var/www/localhost/htdocs/index.html")
