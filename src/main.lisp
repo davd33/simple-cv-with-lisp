@@ -45,9 +45,6 @@
 (defmacro concat (&body body)
   `(concatenate 'string ,@body))
 
-(defmacro css-block (title style-str)
-  `(format nil "~a {~%~a}~%" ,title ,style-str))
-
 (defmacro css (&body styles)
   "Takes a n CSS instructions as two elements lists, then returns a css formatted string.
    A CSS command looks like this: (:font-size <string>)"
