@@ -68,10 +68,11 @@
     :href ,href
     ,@text))
 
-(deftag work-experience (body attrs &key title duration desc technologies ref)
+(deftag work-experience (body attrs &key title duration desc technologies ref company)
   `(:div.card
     (:h1 ,title
          (when ref (link :class "work-reference" :href ref "SEE REFERENCE")))
+    (:h4 ,company)
     (:em ,duration)
     (:p ,desc)
     (:div.card-tags
