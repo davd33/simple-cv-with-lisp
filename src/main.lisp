@@ -40,7 +40,7 @@
 
 ;; DEFINE WEB PAGE COMPONENTS
 
-(defparameter *page-title* "Be.it")
+(defparameter *page-title* "Davd Rueda")
 
 (defmacro concat (&body body)
   `(concatenate 'string ,@body))
