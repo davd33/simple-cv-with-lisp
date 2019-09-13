@@ -1,3 +1,16 @@
+* Tasks
+
+** TODO Add project's dependencies in org file
+
+   In order to generate the PDF, install =wkhtmltopdf=.
+   On ubuntu: =sudo apt-get install wkhtmltopdf=.
+
+** TODO Add Education section
+
+   The education section  is missing in the resume: bachelor  of biology and master
+   of computational biology
+
+
 * Be-It 
 
 ** Description
