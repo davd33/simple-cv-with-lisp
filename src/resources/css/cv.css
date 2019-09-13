@@ -81,6 +81,15 @@ p.about-me {
     color: lightgray;
 }
 
+.pdf-download-link {
+    background: lightgreen;
+    border-radius: 5px;
+}
+
+.pdf-download-link a {
+    color: #222;
+}
+
 .lang-flags {
     margin-left: auto;
 }

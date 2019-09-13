@@ -103,6 +103,8 @@
      (link :href (lang-get :contact.github) "Github")
      (link :href (lang-get :contact.linkedin) "Linkedin")
      (link :href (lang-get :contact.fork-project) "Fork me!")
+     (:span :class "pdf-download-link"
+            (link :href "./resources/cv.david-rueda.pdf" "PDF"))
      (:section.lang-flags
       (:em "Speaks: Fr / En / Sp / De")))
     (:header.centered                   ; CV TITLE - MY NAME BASICALLY...
