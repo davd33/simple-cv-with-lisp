@@ -4,7 +4,6 @@
 
 ;; LOAD EVERYTHING TODO Do better than this...
 
-(load "~/quicklisp/setup.lisp")
 (ql:quickload "unix-opts")
 (ql:quickload "fset")
 (ql:quickload "spinneret")
