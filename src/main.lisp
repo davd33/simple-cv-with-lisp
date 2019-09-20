@@ -57,6 +57,7 @@
      (:html
       (:head
        (:link :href "./resources/css/cv.css" :rel "stylesheet" :type "text/css")
+       (:link :href "./resources/css/font-awesome.css" :rel "stylesheet" :type "text/css")
        (:title ,title))
       (:body
        ,@body))))
@@ -67,10 +68,27 @@
     :href ,href
     ,@text))
 
-(deftag work-experience (body attrs &key title duration desc technologies ref company)
+(deftag reading (body attrs &key title image-path ext-link)
+  `(:a.book-card
+    :style (css
+             (:width "200px")
+             (:margin "10px")
+             (:text-align :center)
+             (:color "#222")
+             (:text-decoration :none))
+    :href (or ext-link "#")
+    :title ,title
+    (:img :width 130
+          :style (css
+                   (:margin "0 auto")
+                   (:background :darkblue))
+          :src (concat "./resources/images/" ,image-path))))
+
+(deftag work-experience (body attrs &key title duration desc technologies ref company remote?)
   `(:div.card
+    (when remote? (:i :style (css (:float :right)) :title "remote position" :class "fal fa-wifi"))
     (:h1 ,title
-         (when ref (link :class "work-reference" :href ref "SEE REFERENCE")))
+         (when ,ref (link :class "work-reference" :href ref "SEE REFERENCE")))
     (:h4 ,company)
     (:em ,duration)
     (:p ,desc)
@@ -121,7 +139,7 @@
     (:section.work-exp-cards            ; WORK EXPERIENCE
      (repeat
        :for-lang (my-exps :work.experience)
-       (destructuring-bind (&key title ref company desc duration technologies)
+       (destructuring-bind (&key title ref company desc duration technologies remote?)
            my-exps
          (work-experience
            :title title
@@ -129,7 +147,21 @@
            :company company
            :duration duration
            :desc desc
-           :technologies technologies))))))
+           :technologies technologies))))
+    (:section.books :id "books-section"
+                    (:h1 :style (css (:text-align :center)) "Reading")
+                    (:div.books
+                     :style (css
+                              (:display :flex)
+                              (:flex-wrap :wrap)
+                              (:justify-content :center)
+                              (:align-items :baseline))
+                     (repeat :for-lang (books-read :reading)
+                       (destructuring-bind (&key title image-path ext-link)
+                           books-read
+                         (reading :title title
+                           :ext-link ext-link
+                           :image-path image-path)))))))
 
 ;; WRITES CV TO HTML FILE
 (let ((linode-html-file-path "/mnt/linode/my/var/www/localhost/htdocs/index.html")

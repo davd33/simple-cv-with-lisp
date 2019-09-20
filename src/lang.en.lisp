@@ -33,6 +33,8 @@
      "Team Leader"
      :company
      "Amerbank"
+     :remote?
+     t
      :desc
      "Leading a development team for the creation of an internal AML facilities. A micro-service approach."
      :duration
@@ -68,4 +70,14 @@
      :duration
      "2012-2013 - 9mo"
      :technologies
-     ("Java" "R" "Swing" "Weka ML" "ImageJ"))))
+     ("Java" "R" "Swing" "Weka ML" "ImageJ")))
+ :reading
+ ('(:title "Practical Common Lisp"
+    :image-path "practical-common-lisp.cover.gif"
+    :ext-link "http://www.gigamonkeys.com/book/")
+   '(:title "Professional Clojure"
+     :image-path "professional-clojure.cover.jpg"
+     :ext-link "https://www.oreilly.com/library/view/professional-clojure/9781119267270/")
+   '(:title "Clojure for the brave and true"
+     :image-path "clojure-for-the-brave-and-true.cover.jpg"
+     :ext-link "https://www.braveclojure.com/")))
