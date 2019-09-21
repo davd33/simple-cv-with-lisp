@@ -113,6 +113,12 @@
             (lang-get lang-key)
             :initial-value `(progn))))
 
+(defmacro decorate-text (deco-list)
+  "Take a list of this form: (:kind-of-tag attributes-list 'some text').
+   Substitutes the list with an actual tag."
+  `(cond
+     ((string= :link (first ,deco-list)) (link :href (third ,deco-list) (second ,deco-list)))))
+
 (defun index ()
   (with-page (:title *page-title*)
     (:section.contact                   ; CONTACT & LANG
@@ -136,7 +142,7 @@
       (repeat
         :for-lang (about-me :about.me.txt.p)
         (:p.about-me about-me))))
-    (:h1.work-exp-section-title "Work Experiences")
+    (:h1.centered.dark-title "Work Experiences")
     (:section.work-exp-cards            ; WORK EXPERIENCE
      (repeat
        :for-lang (my-exps :work.experience)
@@ -149,8 +155,8 @@
            :duration duration
            :desc desc
            :technologies technologies))))
-    (:section.books :id "books-section"
-                    (:h1 :style (css (:text-align :center)) "Reading")
+    (:h1.centered "Reading")
+    (:section.books :id "books-section" ; BOOKS THAT I READ
                     (:div.books
                      :style (css
                               (:display :flex)
@@ -162,7 +168,13 @@
                            books-read
                          (reading :title title
                            :ext-link ext-link
-                           :image-path image-path)))))))
+                           :image-path image-path)))))
+    (:h1.centered.dark-title "When I discovered Lisp")
+    (:section.lisp-experience
+     (repeat :for-lang (my-lisp-story :my-experience-with-lisp)
+       (if (listp my-lisp-story)
+           (decorate-text my-lisp-story)
+           (:p my-lisp-story))))))
 
 ;; WRITES CV TO HTML FILE
 (let ((linode-html-file-path "/mnt/linode/my/var/www/localhost/htdocs/index.html")

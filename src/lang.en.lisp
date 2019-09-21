@@ -4,6 +4,20 @@
  "Open your Mind and Technologies"
  :cv.pic.img.alt
  "me in an image"
+ :my-experience-with-lisp
+ ("I have  been introduced to  functional programming end of  2018 as our  team was
+  given the task to develop a new internal front-end application with React.js. We
+  were coached by an external professional every two weeks."
+  "My interest for functional programming grew and  I started to "
+  '(:link "learn me a haskell for a great good." "http://learnyouahaskell.com/")
+  "Later on, a colleague  of mine told me about clojure so  passionately that I let
+  haskell aside and started learning  Clojure! I did that “not-professionally” for
+  a few month,  learned and practiced Clojure, reagent,  re-frame, compojure, ring
+  (I might forget some). I made a  presentation about it at my company (the slides
+  were a re-frame project  in order to demonstrate during my  speech). I even went
+  to the “heart  of clojure” in Leuven,  Belgium, met a lot  of interesting people
+  there! And since a  few weeks I learn common-lisp. What is there  more to say to
+  show my tremendous interest in Lisp? Lisp is the ultimate weapon.")
  :about.me.txt.p
  ("Free software is Love."
   "For a better quality, for more security and for a better respect of human rights. It is the way to go if we want to have a chance to evolve our consciousness as a society and as individuals."
