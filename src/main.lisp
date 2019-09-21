@@ -4,6 +4,7 @@
 
 ;; LOAD EVERYTHING TODO Do better than this...
 
+(load "~/quicklisp/setup.lisp")
 (ql:quickload "unix-opts")
 (ql:quickload "fset")
 (ql:quickload "spinneret")
@@ -119,7 +120,7 @@
        (link :href (concat "mailto:" my-mail) my-mail))
      (link :href (lang-get :contact.github) "Github")
      (link :href (lang-get :contact.linkedin) "Linkedin")
-     (link :href (lang-get :contact.fork-project) "Fork me!")
+     (link :href (lang-get :contact.fork-project) "(fork-me!)")
      (:span :class "pdf-download-link"
             (link :href "./resources/cv.david-rueda.pdf" "PDF"))
      (:section.lang-flags
