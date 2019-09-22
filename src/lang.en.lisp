@@ -5,19 +5,23 @@
  :cv.pic.img.alt
  "me in an image"
  :my-experience-with-lisp
- ("I have  been introduced to  functional programming end of  2018 as our  team was
-  given the task to develop a new internal front-end application with React.js. We
-  were coached by an external professional every two weeks."
-  "My interest for functional programming grew and  I started to "
-  '(:link "learn me a haskell for a great good." "http://learnyouahaskell.com/")
-  "Later on, a colleague  of mine told me about clojure so  passionately that I let
-  haskell aside and started learning  Clojure! I did that “not-professionally” for
-  a few month,  learned and practiced Clojure, reagent,  re-frame, compojure, ring
-  (I might forget some). I made a  presentation about it at my company (the slides
-  were a re-frame project  in order to demonstrate during my  speech). I even went
-  to the “heart  of clojure” in Leuven,  Belgium, met a lot  of interesting people
-  there! And since a  few weeks I learn common-lisp. What is there  more to say to
-  show my tremendous interest in Lisp? Lisp is the ultimate weapon.")
+ ('("I have  been introduced to  functional programming end of  2018 as our  team was
+      given the task to develop a new internal front-end application with React.js. We
+      were coached by an external professional every two weeks.")
+   '("My interest for functional programming grew and  I started to "
+     (:link "learn me a Haskell for a great good." "http://learnyouahaskell.com/"))
+   '("Later on, a colleague  of mine told me about clojure so  passionately that I let
+      Haskell aside and started learning  Clojure! I learned and practiced Clojure, reagent,  re-frame, compojure, ring
+      (I might forget some). I made a  presentation about it at my company ("
+     (:link "the slides" "https://github.com/davd33/cloj-tp")
+     " were a re-frame project  in order to demonstrate the fast feedback loop obtained
+      by using the REPL with Figwheel). I went
+      to the “heart  of clojure” in Leuven,  Belgium, met a lot  of interesting people
+      there!")
+   '("In order to deepen my understanding of Lisp, I started to learn Common-Lisp in August 2019. I created this web-page
+      with the HTML generation library for CL: "
+     (:link "Spinneret" "https://github.com/ruricolist/spinneret")
+     ". It taught me a lot about how to manage with macros as well as how to use Quicklisp and much more."))
  :about.me.txt.p
  ("Free software is Love."
   "For a better quality, for more security and for a better respect of human rights. It is the way to go if we want to have a chance to evolve our consciousness as a society and as individuals."

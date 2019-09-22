@@ -67,6 +67,7 @@
   `(:a.contact-link
     :class ,class
     :href ,href
+    ,@attrs
     ,@text))
 
 (deftag reading (body attrs &key title image-path ext-link)
@@ -113,12 +114,6 @@
             (lang-get lang-key)
             :initial-value `(progn))))
 
-(defmacro decorate-text (deco-list)
-  "Take a list of this form: (:kind-of-tag attributes-list 'some text').
-   Substitutes the list with an actual tag."
-  `(cond
-     ((string= :link (first ,deco-list)) (link :href (third ,deco-list) (second ,deco-list)))))
-
 (defun index ()
   (with-page (:title *page-title*)
     (:section.contact                   ; CONTACT & LANG
@@ -160,6 +155,7 @@
                     (:div.books
                      :style (css
                               (:display :flex)
+                              (:margin-bottom "50px")
                               (:flex-wrap :wrap)
                               (:justify-content :center)
                               (:align-items :baseline))
@@ -170,17 +166,26 @@
                            :ext-link ext-link
                            :image-path image-path)))))
     (:h1.centered.dark-title "When I discovered Lisp")
-    (:section.lisp-experience
-     (repeat :for-lang (my-lisp-story :my-experience-with-lisp)
-       (if (listp my-lisp-story)
-           (decorate-text my-lisp-story)
-           (:p my-lisp-story))))))
+    (:section.lisp-experience           ; LISP EXPERIENCE
+     (repeat :for-lang (paragraph :my-experience-with-lisp)
+       (reduce #'(lambda (acc curr)     ; TODO create a function
+                   (cons (or (progn
+                               (when (listp curr)
+                                 (cond
+                                   ((equalp :link (first curr)) (link
+                                                                  :style (css (:margin "0"))
+                                                                  :href (third curr)
+                                                                  (second curr))))))
+                             (:span curr))
+                         acc))
+               paragraph
+               :initial-value (:p))))))
 
 ;; WRITES CV TO HTML FILE
 (let ((linode-html-file-path "/mnt/linode/my/var/www/localhost/htdocs/index.html")
       (project-html-file-path "/home/davd/clisp/be-it/src/my-cv.html"))
-  (with-open-file (cv-file project-html-file-path :direction :output
-                                                  :if-exists :supersede)
+  (with-open-file (cv-file linode-html-file-path :direction :output
+                                                 :if-exists :supersede)
     (let ((*html* cv-file))
       (index))))
 
