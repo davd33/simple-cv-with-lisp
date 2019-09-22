@@ -10,6 +10,10 @@
    The education section  is missing in the resume: bachelor  of biology and master
    of computational biology
 
+** TODO Improve sections' titles
+
+   Make the titles  of every section dynamic,  so that they can be  set from within
+   the translation file.
 
 * Be-It 
 
