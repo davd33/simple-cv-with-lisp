@@ -1,15 +1,9 @@
-(defpackage be-it
-  (:use :cl))
+(defpackage #:be-it
+  (:use #:cl)
+  (:export #:save)
+  (:shadowing-import-from #:spinneret))
+
 (in-package :be-it)
-
-;; LOAD EVERYTHING TODO Do better than this...
-
-(load "~/quicklisp/setup.lisp")
-(ql:quickload "unix-opts")
-(ql:quickload "fset")
-(ql:quickload "spinneret")
-(require "spinneret")
-(use-package :spinneret)
 
 ;; DEFINE COMMAND ARGUMENTS
 
@@ -53,7 +47,7 @@
                         collect `(format nil "~a: ~a;~%" ,(string (first style)) ,(second style)))))
 
 (defmacro with-page ((&key title) &body body)
-  `(with-html
+  `(spinneret:with-html
        (:doctype)
      (:html
       (:head
@@ -63,14 +57,14 @@
       (:body
        ,@body))))
 
-(deftag link (text attrs &key href class)
+(spinneret:deftag link (text attrs &key href class)
   `(:a.contact-link
     :class ,class
     :href ,href
     ,@attrs
     ,@text))
 
-(deftag reading (body attrs &key title image-path ext-link)
+(spinneret:deftag reading (body attrs &key title image-path ext-link)
   `(:a.book-card
     :style (css
              (:width "200px")
@@ -86,7 +80,7 @@
                    (:background :darkblue))
           :src (concat "./resources/images/" ,image-path))))
 
-(deftag work-experience (body attrs &key title duration desc technologies ref company remote?)
+(spinneret:deftag work-experience (body attrs &key title duration desc technologies ref company remote?)
   `(:div.card
     (when remote? (:i :style (css (:float :right)) :title "remote position" :class "fal fa-wifi"))
     (:h1 ,title
@@ -99,7 +93,7 @@
            collect (:div.card-tag tech)))
     ,@body))
 
-(deftag repeat (template attrs &key for-lang)
+(spinneret:deftag repeat (template attrs &key for-lang)
   "This is a tag that repeats a given template using the key
    for a translation split into a list of several strings.
      - lang-binding-form: 2 elements list with var name and translation key
@@ -182,12 +176,13 @@
                :initial-value (:p))))))
 
 ;; WRITES CV TO HTML FILE
-(let ((linode-html-file-path "/mnt/linode/my/var/www/localhost/htdocs/index.html")
-      (project-html-file-path "/home/davd/clisp/be-it/src/my-cv.html"))
-  (with-open-file (cv-file linode-html-file-path :direction :output
-                                                 :if-exists :supersede)
+(defun save ()
+  (let ((linode-html-file-path "/mnt/linode/my/var/www/localhost/htdocs/index.html")
+        (project-html-file-path "/home/davd/clisp/be-it/src/my-cv.html"))
+   (with-open-file (cv-file project-html-file-path :direction :output
+                                                   :if-exists :supersede)
     (let ((*html* cv-file))
-      (index))))
+      (index)))))
 
 ;; exit program - that doesn't work yet... TODO
 ;; (sb-ext:exit)
