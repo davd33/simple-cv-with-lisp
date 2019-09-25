@@ -175,14 +175,11 @@
                paragraph
                :initial-value (:p))))))
 
-;; WRITES CV TO HTML FILE
 (defun save ()
+  "Generate and write HTML into the desired system file."
   (let ((linode-html-file-path "/mnt/linode/my/var/www/localhost/htdocs/index.html")
         (project-html-file-path "/home/davd/clisp/be-it/src/my-cv.html"))
    (with-open-file (cv-file project-html-file-path :direction :output
                                                    :if-exists :supersede)
     (let ((*html* cv-file))
       (index)))))
-
-;; exit program - that doesn't work yet... TODO
-;; (sb-ext:exit)
