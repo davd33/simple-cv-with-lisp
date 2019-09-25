@@ -1,4 +1,9 @@
 * Tasks
+  
+** TODO Add a User Manual
+
+   Write a manual on how to use the =lang.en.lisp= translation file, so that people
+   know exactly what data structures the CV template expects.
 
 ** TODO Add project's dependencies in org file
 
