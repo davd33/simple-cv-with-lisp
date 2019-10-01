@@ -26,11 +26,11 @@
     (with-standard-io-syntax
       (read in))))
 
-(defparameter lang (read-lang-lisp "/home/davd/clisp/be-it/src/lang.en.lisp"))
+(defparameter *lang* (read-lang-lisp "/home/davd/clisp/be-it/src/lang.en.lisp"))
 
 (defun lang-get (key)
   "Get the translation for the given key."
-  (getf lang key))
+  (getf *lang* key))
 
 ;; DEFINE WEB PAGE COMPONENTS
 
@@ -48,7 +48,7 @@
 
 (defmacro with-page ((&key title) &body body)
   `(spinneret:with-html
-       (:doctype)
+     (:doctype)
      (:html
       (:head
        (:link :href "./resources/css/cv.css" :rel "stylesheet" :type "text/css")
