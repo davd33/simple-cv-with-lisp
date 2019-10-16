@@ -21,16 +21,28 @@
 
 ;; SETUP LOCALIZATION
 
-(defun read-lang-lisp (file-path)
-  (with-open-file (in file-path)
-    (with-standard-io-syntax
-      (read in))))
+(eval-when
+    (:compile-toplevel
+     :load-toplevel
+     :execute)
+  (defun read-lang-lisp (file-path)
+    (with-open-file (in file-path)
+      (with-standard-io-syntax
+        (read in)))))
 
-(defparameter *lang* (read-lang-lisp "/home/davd/clisp/be-it/src/lang.en.lisp"))
+(eval-when
+    (:compile-toplevel
+     :load-toplevel
+     :execute)
+  (defparameter *lang* (read-lang-lisp "/home/davd/clisp/be-it/src/lang.en.lisp")))
 
-(defun lang-get (key)
-  "Get the translation for the given key."
-  (getf *lang* key))
+(eval-when
+    (:compile-toplevel
+     :load-toplevel
+     :execute)
+  (defun lang-get (key)
+    "Get the translation for the given key."
+    (getf *lang* key)))
 
 ;; DEFINE WEB PAGE COMPONENTS
 
@@ -176,10 +188,9 @@
                :initial-value (:p))))))
 
 (defun save ()
-  "Generate and write HTML into the desired system file."
   (let ((linode-html-file-path "/mnt/linode/my/var/www/localhost/htdocs/index.html")
         (project-html-file-path "/home/davd/clisp/be-it/src/my-cv.html"))
-   (with-open-file (cv-file project-html-file-path :direction :output
-                                                   :if-exists :supersede)
-    (let ((*html* cv-file))
-      (index)))))
+    (with-open-file (cv-file project-html-file-path :direction :output
+                                                    :if-exists :supersede)
+      (let ((spinneret:*html* cv-file))
+        (index)))))
