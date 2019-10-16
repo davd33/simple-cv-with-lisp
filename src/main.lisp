@@ -188,9 +188,9 @@
                :initial-value (:p))))))
 
 (defun save ()
-  (let ((linode-html-file-path "/mnt/linode/my/var/www/localhost/htdocs/index.html")
+  (let ((linode-html-file-path "/home/davd/linode/var/www/localhost/htdocs/index.html")
         (project-html-file-path "/home/davd/clisp/be-it/src/my-cv.html"))
-    (with-open-file (cv-file project-html-file-path :direction :output
+    (with-open-file (cv-file linode-html-file-path :direction :output
                                                     :if-exists :supersede)
       (let ((spinneret:*html* cv-file))
         (index)))))
