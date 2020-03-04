@@ -1,44 +1,7 @@
-* Tasks
-  
-** TODO Add a User Manual
-
-   Write a manual on how to use the =lang.en.lisp= translation file, so that people
-   know exactly what data structures the CV template expects.
-
-** TODO Add project's dependencies in org file
-
-   In order to generate the PDF, install =wkhtmltopdf=.
-   On ubuntu: =sudo apt-get install wkhtmltopdf=.
-
-** TODO Add Education section
-
-   The education section  is missing in the resume: bachelor  of biology and master
-   of computational biology
-
-** TODO Improve sections' titles
-
-   Make the titles  of every section dynamic,  so that they can be  set from within
-   the translation file.
-
-* Be-It 
-
-** Description
-  
-The project's name refers to various concepts that are important to me.
-
-*** Be
-
-    Everyone sees life differently. **Being** is for me the first pillar of our
-    life. We name ourselves living beings. Should we live for doing things or for
-    being something, someone? Are we living beings or living doings?
-    
-*** IT
-
-    Well this one is obvious: just Information Technology. But it's also nice to put
-    it after the verb **Be** as in "Be it!".
+* Be-It
 
 ** Usage
-   
+
    Simply call the [[file:deploy.sh][Deploy script]].
    There is no parameters yet, it's not finished... Actually the Lisp script needs
    to be parameterized as well so that the destination cv html file can be changed
