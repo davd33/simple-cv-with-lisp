@@ -32,7 +32,7 @@
 (mito:deftable paragraph-element ()
   ((section :col-type (:varchar 64))
    (paragraph :col-type (:varchar 64))
-   (order :col-type :number)
+   (order :col-type :real)
    (content :col-type :text))
   (primary-key section paragraph))
 ;; The whole CV
@@ -40,9 +40,9 @@
   ((title :col-type (:varchar 64))
    (sub-title :col-type (:varchar 64))
    (image-description :col-type (:varchar 64))
-   (contact :col-type contact :references contact)
-   (work-experiences :col-type work-experience :references work-experiences)
-   (reading :col-type reading :references reading))
+   (contact :col-type (or contact :null) :references contact)
+   (work-experiences :col-type (or work-experience :null) :references work-experiences)
+   (reading :col-type (or reading :null) :references reading))
   (:unique-keys title))
 
 ;; UTILITY

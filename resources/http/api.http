@@ -1,6 +1,16 @@
 # API DOC
 GET http://localhost:9003/api-doc
 
+# CREATE DUMB CV
+POST http://localhost:9003/cv
+Content-Type: application/json
+
+{
+  "title": "hello1",
+  "sub-title": "LOL",
+  "image-description": "ododododo"
+}
+
 # CREATE MY CV
 POST http://localhost:9003/cv
 Content-Type: application/json

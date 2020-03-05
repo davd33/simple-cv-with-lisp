@@ -1,6 +1,7 @@
 (defpackage #:api
   (:use #:cl #:snooze)
-  (:export #:start))
+  (:export #:start)
+  (:shadowing-import-from #:dao))
 
 (in-package #:api)
 
@@ -14,8 +15,16 @@
                    (json:decode-json-from-string (payload-as-string))
                  (error (e)
                    (http-condition 400 "Malformed JSON (~A)!" e)))))
-    (format t "hello = ~A" (cdr (assoc :title json)))
-    "CV Stored."))
+    (handler-case (progn
+                    (mito:create-dao 'dao:cv
+                                     :title (cdr (assoc :title json))
+                                     :sub-title "coucou qui est la"
+                                     :image-description "je suis ici")
+                    "CV Stored.")
+      (dbi.error:<dbi-database-error> (e)
+        (format t "error during CV creation: ~A" e)
+        "ERROR DB"))
+    ))
 
 
 ;; START HTTP SERVER
