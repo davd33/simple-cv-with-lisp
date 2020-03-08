@@ -1,13 +1,15 @@
-(defpackage #:api
-  (:use #:cl #:snooze)
-  (:export #:start)
-  (:shadowing-import-from #:dao))
-
 (in-package #:api)
+
+;; TODO
+;; (defmacro get-in (json fields)
+;;   (loop for f in fields
+;;        ))
 
 (defroute api-doc
   (:get :text/html)
   "<p>Helloworld</p>")
+
+(setf snooze:*catch-errors* :verbose)
 
 (defroute cv
   (:post "application/json")
@@ -18,15 +20,21 @@
     (handler-case (progn
                     (mito:create-dao 'dao:cv
                                      :title (cdr (assoc :title json))
-                                     :sub-title "coucou qui est la"
-                                     :image-description "je suis ici")
+                                     :sub-title (cdr (assoc :sub-title json))
+                                     :image-description (cdr (assoc :image-description json)))
+                    (format t "Has been stored :)")
                     "CV Stored.")
       (dbi.error:<dbi-database-error> (e)
         (format t "error during CV creation: ~A" e)
-        "ERROR DB"))
+        (format nil "ERROR DB: ~A" e)))
     ))
 
 
 ;; START HTTP SERVER
+(defparameter server-handler nil)
 (defun start ()
-  (clack:clackup (snooze:make-clack-app) :port 9003))
+  (setf server-handler
+        (clack:clackup (snooze:make-clack-app) :port 9003)))
+(defun stop ()
+  (when server-handler
+    (clack:stop server-handler)))

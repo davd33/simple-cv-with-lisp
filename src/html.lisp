@@ -1,8 +1,3 @@
-(defpackage #:be-it
-  (:use #:cl)
-  (:export #:save)
-  (:shadowing-import-from #:spinneret))
-
 (in-package :be-it)
 
 ;; DEFINE COMMAND ARGUMENTS

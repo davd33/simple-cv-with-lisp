@@ -13,7 +13,8 @@
                #:unix-opts)
   :components ((:module "src"
                 :components
-                ((:file "main")
+                ((:file "packages")
+                 (:file "html")
                  (:file "dao")
                  (:file "api"))))
   :description "The Free custom CV compatible with all other CV/jobs plateform."

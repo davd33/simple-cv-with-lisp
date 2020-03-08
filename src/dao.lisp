@@ -1,15 +1,12 @@
-(defpackage #:dao
-  (:use #:cl #:sxql)
-  (:export #:contact
-           #:work-experience
-           #:reading
-           #:paragraph-element
-           #:cv))
+(in-package #:dao)
 
-(mito:connect-toplevel :postgres
-                       :database-name "be_it"
-                       :username "postgres"
-                       :password "helloworld")
+(defparameter *connection* nil)
+(defun connect ()
+  (setf *connection*
+        (mito:connect-toplevel :postgres
+                               :database-name "be_it"
+                               :username "postgres"
+                               :password "helloworld")))
 
 ;; TABLE DEFINITIONS
 ;; Contact information
