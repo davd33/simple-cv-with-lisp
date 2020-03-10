@@ -7,7 +7,8 @@
            #:cv
            #:title
            #:sub-title
-           #:connect))
+           #:connect
+           #:create-tables))
 
 (defpackage #:api
   (:use #:cl #:snooze)

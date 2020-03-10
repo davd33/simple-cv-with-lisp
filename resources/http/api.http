@@ -6,9 +6,56 @@ POST http://localhost:9003/cv
 Content-Type: application/json
 
 {
-  "title": "hello11",
+  "title": "newline2522222",
   "sub-title": "LOL",
-  "image-description": "ododododo"
+  "image-description": "ododododo",
+  "contact": {
+    "mail": "davd33@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/davd33-rueda/",
+    "github": "https://www.github.com/davd33"
+  },
+  "work-experiences": [
+    {
+      "title": "IT Consultant",
+      "company": "Technology Partner",
+      "description": "Working in Luxembourg for the Banque Internationale du Luxembourg as a Java and React developer.",
+      "duration": "2019 - 10mo",
+      "technologies": [
+        "Spring boot",
+        "Scala",
+        "React.js"
+      ]
+    },
+    {
+      "title": "Software Engineer",
+      "company": "CGI Darmstadt",
+      "ref": "https://drive.google.com/file/d/0B3Wu5re6rOM3aHV0THpPU1lrSGc/view?usp=sharing",
+      "description": "Galileo - European Navigation System and ESA's satellite management software.",
+      "duration": "2013-2017 - 3+y",
+      "technologies": [
+        "Angular 4",
+        "Node.js",
+        "AWS"
+      ]
+    }
+  ],
+  "readings": [
+    {
+      "title": "Practical Common Lisp",
+      "image": "practical-common-lisp.cover.gif",
+      "external-url": "http://www.gigamonkeys.com/book/"
+    },
+    {
+      "title": "Professional Clojure",
+      "image": "professional-clojure.cover.jpg",
+      "external-url": "https://www.oreilly.com/library/view/professional-clojure/9781119267270/"
+    },
+    {
+      "title": "Clojure for the brave and true",
+      "image": "clojure-for-the-brave-and-true.cover.jpg",
+      "external-url": "https://www.braveclojure.com/"
+    }
+  ]
 }
 
 # CREATE MY CV
@@ -28,7 +75,7 @@ Content-Type: application/json
     {
       "title": "IT Consultant",
       "company": "Technology Partner",
-      "desc": "Working in Luxembourg for the Banque Internationale du Luxembourg as a Java and React developer.",
+      "description": "Working in Luxembourg for the Banque Internationale du Luxembourg as a Java and React developer.",
       "duration": "2019 - 10mo",
       "technologies": [
         "Spring boot",
@@ -38,7 +85,7 @@ Content-Type: application/json
     },
     {
       "title": "Entrepreneur",
-      "desc": "Development of an App for training German. A jump outside the comfort zone. Introduction to micro-services.",
+      "description": "Development of an App for training German. A jump outside the comfort zone. Introduction to micro-services.",
       "duration": "2017 - 6mo",
       "technologies": [
         "Angular 4",
@@ -51,7 +98,7 @@ Content-Type: application/json
       "title": "Software Engineer",
       "company": "CGI Darmstadt",
       "ref": "https://drive.google.com/file/d/0B3Wu5re6rOM3aHV0THpPU1lrSGc/view?usp=sharing",
-      "desc": "Galileo - European Navigation System and ESA's satellite management software.",
+      "description": "Galileo - European Navigation System and ESA's satellite management software.",
       "duration": "2013-2017 - 3+y",
       "technologies": [
         "Angular 4",
@@ -62,7 +109,7 @@ Content-Type: application/json
     {
       "title": "Software Engineer",
       "company": "BIOTEC",
-      "desc": "Drug discovery for bone diseases: towards high-throughput and high-content phenotype comparison.",
+      "description": "Drug discovery for bone diseases: towards high-throughput and high-content phenotype comparison.",
       "duration": "2012-2013 - 9mo",
       "technologies": [
         "Java",
@@ -76,7 +123,7 @@ Content-Type: application/json
       "title": "Team Leader",
       "company": "Amerbank",
       "remote": true,
-      "desc": "Leading a development team for the creation of an internal AML facilities. A micro-service approach.",
+      "description": "Leading a development team for the creation of an internal AML facilities. A micro-service approach.",
       "duration": "2018 - 9mo",
       "technologies": [
         "Istio",

@@ -2,45 +2,52 @@
 
 (defparameter *connection* nil)
 (defun connect ()
-  (setf *connection*
-        (mito:connect-toplevel :postgres
-                               :database-name "be_it"
-                               :username "postgres"
-                               :password "helloworld")))
+  (when (null *connection*)
+    (setf *connection*
+          (mito:connect-toplevel :postgres
+                                 :database-name "be_it"
+                                 :username "postgres"
+                                 :password "helloworld"))))
 
 ;; TABLE DEFINITIONS
 ;; Contact information
 (mito:deftable contact ()
-  ((mail :col-type (:varchar 64))
-   (linkedin :col-type (:varchar 64))
-   (github :col-type (:varchar 64))))
-;; The professional experience
-(mito:deftable work-experience ()
-  ((title :col-type (:varchar 64))
-   (company :col-type (:varchar 64))
-   (description :col-type (:varchar 64))
-   (technologies :col-type (:varchar 64))))
+  ((mail :col-type (:varchar 255))
+   (linkedin :col-type (:varchar 255))
+   (github :col-type (:varchar 255))))
+
 ;; What books I've been reading
 (mito:deftable reading ()
-  ((title :col-type (:varchar 64))
-   (image :col-type (:varchar 64))
-   (external-url :col-type (:varchar 64))))
-;; A paragraph is a list of elements (e.g. text, links)
-(mito:deftable paragraph-element ()
-  ((section :col-type (:varchar 64))
-   (paragraph :col-type (:varchar 64))
-   (order :col-type :real)
-   (content :col-type :text))
-  (primary-key section paragraph))
+  ((title :col-type (:varchar 255))
+   (image :col-type (:varchar 255))
+   (external-url :col-type (:varchar 255))
+   (cv :col-type (or cv :null) :references cv)))
+
 ;; The whole CV
 (mito:deftable cv ()
-  ((title :col-type (:varchar 64))
-   (sub-title :col-type (:varchar 64))
-   (image-description :col-type (:varchar 64))
+  ((title :col-type (:varchar 255))
+   (sub-title :col-type (:varchar 255))
+   (image-description :col-type (:varchar 255))
    (contact :col-type (or contact :null) :references contact)
-   (work-experiences :col-type (or work-experience :null) :references work-experiences)
    (reading :col-type (or reading :null) :references reading))
   (:unique-keys title))
+
+;; The professional experience
+(mito:deftable work-experience ()
+  ((title :col-type (:varchar 255))
+   (company :col-type (:varchar 255))
+   (description :col-type (:varchar 255))
+   (technologies :col-type (:varchar 255))
+   (cv :col-type (or cv :null) :references cv)))
+
+;; A paragraph is a list of elements (e.g. text, links)
+(mito:deftable paragraph-element ()
+  ((section :col-type (:varchar 255))
+   (paragraph :col-type (:varchar 255))
+   (order :col-type :real)
+   (content :col-type :text)
+   (cv :col-type (or cv :null) :references cv))
+  (primary-key section paragraph))
 
 ;; UTILITY
 ;; (defun cv-obj? (cv)
