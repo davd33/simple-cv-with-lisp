@@ -16,21 +16,20 @@
    (linkedin :col-type (:varchar 255))
    (github :col-type (:varchar 255))))
 
+;; The whole CV
+(mito:deftable cv ()
+  ((title :col-type (:varchar 255))
+   (sub-title :col-type (:varchar 255))
+   (image-description :col-type (:varchar 255))
+   (contact :col-type (or contact :null) :references contact))
+  (:unique-keys title))
+
 ;; What books I've been reading
 (mito:deftable reading ()
   ((title :col-type (:varchar 255))
    (image :col-type (:varchar 255))
    (external-url :col-type (:varchar 255))
    (cv :col-type (or cv :null) :references cv)))
-
-;; The whole CV
-(mito:deftable cv ()
-  ((title :col-type (:varchar 255))
-   (sub-title :col-type (:varchar 255))
-   (image-description :col-type (:varchar 255))
-   (contact :col-type (or contact :null) :references contact)
-   (reading :col-type (or reading :null) :references reading))
-  (:unique-keys title))
 
 ;; The professional experience
 (mito:deftable work-experience ()

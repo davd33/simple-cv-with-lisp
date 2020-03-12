@@ -50,12 +50,25 @@
                                                                  :technologies (format nil
                                                                                        "~{~A~^,~}"
                                                                                        (get-in we :technologies))
-                                                                 :cv cv))))
+                                                                 :cv cv)))
+                         (paragraph-elements (loop for p in (get-in json :paragraphs)
+                                                collect
+                                                  (loop for p-elt in (get-in p :elements)
+                                                     collect
+                                                       (mito:create-dao 'dao:paragraph-element
+                                                                   :section (get-in p :section)
+                                                                   :paragraph (get-in p-elt :paragraph)
+                                                                   :order (get-in p-elt :order)
+                                                                   :content (json:encode-json-to-string
+                                                                             (get-in p-elt :content))
+                                                                   :cv cv)))))
                     (let* ((out "")
                            (out (when readings
                                   (format nil "~A~&Created ~A readings" out (length readings))))
                            (out (when work-experiences
                                   (format nil "~A~&Created ~A work-experiences" out (length work-experiences))))
+                           (out (when paragraph-elements
+                                  (format nil "~A~&Createi ~A paragraph-elements" out (length paragraph-elements))))
                            (out (when cv
                                   (format nil "~A~&CV Stored: ~A" out (slot-value cv 'dao:title)))))
                       (or out "Nothing updated.")))

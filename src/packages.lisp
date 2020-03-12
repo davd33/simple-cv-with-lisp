@@ -1,14 +1,19 @@
 (defpackage #:dao
   (:use #:cl #:sxql)
-  (:export #:contact
-           #:work-experience
-           #:reading
-           #:paragraph-element
-           #:cv
-           #:title
-           #:sub-title
-           #:connect
-           #:create-tables))
+  (:export
+   ;; ENTITIES
+   #:contact
+   #:work-experience
+   #:reading
+   #:paragraph-element
+   #:cv
+   ;; ENTITY FIELDS
+   #:title
+   #:sub-title
+   ;; CONNECT AND CREATE TABLES
+   #:connect
+   #:create-tables
+   #:*connection*))
 
 (defpackage #:api
   (:use #:cl #:snooze)
