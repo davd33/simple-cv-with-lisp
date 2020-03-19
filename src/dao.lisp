@@ -48,6 +48,36 @@
    (cv :col-type (or cv :null) :references cv))
   (primary-key section paragraph))
 
+;; Mappers
+(defmacro make-mapper (kind mappings)
+  "Return a function of a mapper."
+  `(let ((map (make-hash-table)))
+     ,@(reduce #'(lambda (acc curr) (append acc `((hm-put map ,@curr))))
+               mappings
+               :initial-value `())
+     (make-json->dao-mapper :hm map
+                            :kind ,kind)))
+
+(defstruct json->dao-mapper
+  hm
+  kind)
+
+(defun contact-mapper ()
+  "Define a contact mapper that maps a contact JSON object to a dao:contact"
+  (make-mapper 'contact
+               (('mail :mail)
+                ('linkedin :linkedin)
+                ('github :github))))
+
+(defun json->dao (mapper json)
+  "Fills the dao from the given JSON object and according to the mapper."
+  (let* ((m-kind (json->dao-mapper-kind mapper))
+         (dao (make-instance m-kind)))
+    (maphash #'(lambda (k v)
+                 (setf (slot-value dao k) (jsons:get-in json v)))
+             (json->dao-mapper-hm mapper))
+    dao))
+
 ;; UTILITY
 ;; (defun cv-obj? (cv)
 ;;   "Return T if cv is a cv object."

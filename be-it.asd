@@ -14,6 +14,8 @@
   :components ((:module "src"
                 :components
                 ((:file "packages")
+                 (:file "jsons")
+                 (:file "hm")
                  (:file "html")
                  (:file "dao")
                  (:file "api"))))

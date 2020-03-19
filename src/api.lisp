@@ -1,10 +1,5 @@
 (in-package #:api)
 
-(defun get-in (json &rest fields)
-  (first (last (loop for f in fields
-                  for res = (cdr (assoc f json)) then (cdr (assoc f res))
-                  collect res))))
-
 (defroute api-doc
   (:get :text/html)
   "<p>Helloworld</p>")
@@ -17,10 +12,7 @@
                    (json:decode-json-from-string (payload-as-string))
                  (error (e)
                    (http-condition 400 "Malformed JSON (~A)!" e)))))
-    (handler-case (let* ((contact (mito:create-dao 'dao:contact
-                                                   :mail (get-in json :contact :mail)
-                                                   :linkedin (get-in json :contact :linkedin)
-                                                   :github (get-in json :contact :github)))
+    (handler-case (let* ((contact (dao:json->dao (dao:contact-mapper) (get-in json :contact)))
 
                          (cv (let ((title (get-in json :title))
                                    (sub-title (get-in json :sub-title))
@@ -85,4 +77,4 @@
         (clack:clackup (snooze:make-clack-app) :port 9003)))
 (defun stop ()
   (when *server-handler*
-    (clack:stop server-handler)))
+    (clack:stop *server-handler*)))
