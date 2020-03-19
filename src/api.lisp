@@ -12,7 +12,7 @@
                    (json:decode-json-from-string (payload-as-string))
                  (error (e)
                    (http-condition 400 "Malformed JSON (~A)!" e)))))
-    (handler-case (let* ((contact (dao:json->dao (dao:contact-mapper) (get-in json :contact)))
+    (handler-case (let* ((contact (mito:insert-dao (dao:json->dao (dao:contact-mapper) (get-in json :contact))))
 
                          (cv (let ((title (get-in json :title))
                                    (sub-title (get-in json :sub-title))
@@ -60,7 +60,7 @@
                            (out (when work-experiences
                                   (format nil "~A~&Created ~A work-experiences" out (length work-experiences))))
                            (out (when paragraph-elements
-                                  (format nil "~A~&Createi ~A paragraph-elements" out (length paragraph-elements))))
+                                  (format nil "~A~&Created ~A paragraph-elements" out (length paragraph-elements))))
                            (out (when cv
                                   (format nil "~A~&CV Stored: ~A" out (slot-value cv 'dao:title)))))
                       (or out "Nothing updated.")))
