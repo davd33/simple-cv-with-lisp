@@ -39,16 +39,21 @@
                                                                         `(:content ,(json:encode-json-to-string
                                                                                      (get-in p-elt :content)))
                                                                         `(:cv ,cv)))))))
-                    (let* ((out "")
+                    (let* ((out (acons :command "Create CV." nil))
                            (out (when readings
-                                  (format nil "~A~&Created ~A readings" out (length readings))))
+                                  (alists:aconses out `((:created :readings)
+                                                        ,(length readings)))))
                            (out (when work-experiences
-                                  (format nil "~A~&Created ~A work-experiences" out (length work-experiences))))
+                                  (alists:aconses out `((:created :work-experiences)
+                                                        ,(length work-experiences)))))
                            (out (when paragraph-elements
-                                  (format nil "~A~&Created ~A paragraph-elements" out (length paragraph-elements))))
+                                  (alists:aconses out `((:created :paragraphs-elements)
+                                                        ,(length paragraph-elements)))))
                            (out (when cv
-                                  (format nil "~A~&CV Stored: ~A" out (slot-value cv 'dao:title)))))
-                      (or out "Nothing updated.")))
+                                  (alists:aconses out `((:created :cv) "CV Stored")))))
+                      (format t "~&~A" out)
+                      (or (and out (json:encode-json-alist-to-string out))
+                          "Nothing updated.")))
       (dbi.error:<dbi-database-error> (e)
         (format t "~&error during CV creation: ~A" e)
         (format nil "ERROR DB: ~A" e)))
