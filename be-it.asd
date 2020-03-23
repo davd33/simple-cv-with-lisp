@@ -10,12 +10,15 @@
                #:fset
                #:mito
                #:sxql
-               #:unix-opts)
+               #:unix-opts
+               #:trivia
+               #:alexandria)
   :components ((:module "src"
                 :components
                 ((:file "packages")
                  (:file "jsons")
                  (:file "hm")
+                 (:file "alists")
                  (:file "html")
                  (:file "dao")
                  (:file "api"))))

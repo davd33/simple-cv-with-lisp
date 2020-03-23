@@ -7,6 +7,10 @@
   (:export #:hm-put
            #:hm-get))
 
+(defpackage #:alists
+  (:use #:cl)
+  (:export #:aconses))
+
 (defpackage #:dao
   (:use #:cl #:sxql)
   (:export
@@ -21,9 +25,11 @@
    #:sub-title
    #:mail
    ;; CREATE DAOs
-   #:json->dao
-   ;; JSON -> DAO MAPPERS
-   #:contact-mapper
+   #:insert-contact
+   #:insert-cv
+   #:insert-reading
+   #:insert-work-experience
+   #:insert-paragraph-element
    ;; CONNECT AND CREATE TABLES
    #:connect
    #:create-tables

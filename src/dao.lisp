@@ -52,7 +52,7 @@
 (defmacro make-mapper (kind mappings)
   "Return a function of a mapper."
   `(let ((map (make-hash-table)))
-     ,@(reduce #'(lambda (acc curr) (append acc `((hm-put map ,@curr))))
+     ,@(reduce #'(lambda (acc curr) (append acc `((hm:hm-put map ,@curr))))
                mappings
                :initial-value `())
      (make-json->dao-mapper :hm map
@@ -62,13 +62,70 @@
   hm
   kind)
 
+;; MAPPERS
 (defun contact-mapper ()
-  "Define a contact mapper that maps a contact JSON object to a dao:contact"
+  "Define a contact mapper that maps a contact JSON object to a dao:contact."
   (make-mapper 'contact
                (('mail :mail)
                 ('linkedin :linkedin)
                 ('github :github))))
 
+(defun cv-mapper ()
+  "Define a cv mapper that maps cv JSON object to a dao:cv."
+  (make-mapper 'cv
+               (('title :title)
+                ('sub-title :sub-title)
+                ('image-description :image-description)
+                ('contact :contact))))
+
+(defun reading-mapper ()
+  "Define a reading mapper that maps reading JSON object to a dao:reading."
+  (make-mapper 'reading
+               (('title :title)
+                ('image :image)
+                ('external-url :external-url)
+                ('cv :cv))))
+
+(defun work-experience-mapper ()
+  "Define a work-experience mapper that maps work-experience JSON object to a dao:work-experience."
+  (make-mapper 'work-experience
+               (('title :title)
+                ('company :company)
+                ('description :description)
+                ('technologies :technologies)
+                ('cv :cv))))
+
+(defun paragraph-element-mapper ()
+  "Define a paragraph-element mapper that maps paragraph-element JSON object to a dao:paragraph-element."
+  (make-mapper 'paragraph-element
+               (('section :section)
+                ('paragraph :paragraph)
+                ('order :order)
+                ('content :content)
+                ('cv :cv))))
+
+;; INSERT FROM JSON
+(defun insert-paragraph-element (json-paragraph-element)
+  "Insert paragraph-element from json object."
+  (mito:insert-dao (json->dao (paragraph-element-mapper) json-paragraph-element)))
+
+(defun insert-work-experience (json-work-experience)
+  "Insert work-experience from json object."
+  (mito:insert-dao (json->dao (work-experience-mapper) json-work-experience)))
+
+(defun insert-contact (json-contact-obj)
+  "Insert contact from json object."
+  (mito:insert-dao (json->dao (contact-mapper) json-contact-obj)))
+
+(defun insert-cv (json-cv-obj)
+  "Insert cv from json object."
+  (mito:insert-dao (json->dao (cv-mapper) json-cv-obj)))
+
+(defun insert-reading (json-reading-obj)
+  "Insert reading json object."
+  (mito:insert-dao (json->dao (reading-mapper) json-reading-obj)))
+
+;; MAP A JSON TO A DAO
 (defun json->dao (mapper json)
   "Fills the dao from the given JSON object and according to the mapper."
   (let* ((m-kind (json->dao-mapper-kind mapper))
