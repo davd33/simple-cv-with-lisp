@@ -39,22 +39,20 @@
                                                                         `(:content ,(json:encode-json-to-string
                                                                                      (get-in p-elt :content)))
                                                                         `(:cv ,cv)))))))
-                    (let* ((out (acons :command "Create CV." nil))
-                           (out (when readings
-                                  (jsons:add-value (length readings) out
-                                                   :created :readings)))
-                           (out (when work-experiences
-                                  (jsons:add-value (length work-experiences) out
-                                                   :created :work-experiences)))
-                           (out (when paragraph-elements
-                                  (jsons:add-value (length paragraph-elements) out
-                                                   :created :paragraphs-elements)))
-                           (out (when cv
-                                  (jsons:add-value "CV Stored" out
-                                                   :created :cv))))
-                      (format t "~&~A" out)
-                      (or (and out (json:encode-json-alist-to-string out))
-                          "Nothing updated.")))
+                    (let* ((response (acons :command "Create CV." nil))
+                           (response (when readings
+                                       (jsons:add-value (length readings) response
+                                                        :created :readings)))
+                           (response (when work-experiences
+                                       (jsons:add-value (length work-experiences) response
+                                                        :created :work-experiences)))
+                           (response (when paragraph-elements
+                                       (jsons:add-value (length paragraph-elements) response
+                                                        :created :paragraphs-elements)))
+                           (response (when cv
+                                       (jsons:add-value "CV Stored" response
+                                                        :created :cv))))
+                      (json:encode-json-alist-to-string response)))
       (dbi.error:<dbi-database-error> (e)
         (format t "~&error during CV creation: ~A" e)
         (format nil "ERROR DB: ~A" e)))
