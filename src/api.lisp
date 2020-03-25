@@ -41,16 +41,17 @@
                                                                         `(:cv ,cv)))))))
                     (let* ((out (acons :command "Create CV." nil))
                            (out (when readings
-                                  (alists:aconses out `((:created :readings)
-                                                        ,(length readings)))))
+                                  (jsons:add-value (length readings) out
+                                                   :created :readings)))
                            (out (when work-experiences
-                                  (alists:aconses out `((:created :work-experiences)
-                                                        ,(length work-experiences)))))
+                                  (jsons:add-value (length work-experiences) out
+                                                   :created :work-experiences)))
                            (out (when paragraph-elements
-                                  (alists:aconses out `((:created :paragraphs-elements)
-                                                        ,(length paragraph-elements)))))
+                                  (jsons:add-value (length paragraph-elements) out
+                                                   :created :paragraphs-elements)))
                            (out (when cv
-                                  (alists:aconses out `((:created :cv) "CV Stored")))))
+                                  (jsons:add-value "CV Stored" out
+                                                   :created :cv))))
                       (format t "~&~A" out)
                       (or (and out (json:encode-json-alist-to-string out))
                           "Nothing updated.")))

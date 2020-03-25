@@ -21,7 +21,8 @@
                  (:file "alists")
                  (:file "html")
                  (:file "dao")
-                 (:file "api"))))
+                 (:file "api")
+                 (:file "dev.mocks"))))
   :description "The Free custom CV compatible with all other CV/jobs plateform."
   :in-order-to ((test-op (test-op "be-it/tests"))))
 

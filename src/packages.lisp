@@ -1,15 +1,18 @@
+(defpackage #:alists
+  (:use #:cl #:alexandria)
+  (:export #:aconses
+           #:deep-acons
+           #:merge-acons))
+
 (defpackage #:jsons
   (:use #:cl)
-  (:export #:get-in))
+  (:export #:get-in
+           #:add-value))
 
 (defpackage #:hm
   (:use #:cl)
   (:export #:hm-put
            #:hm-get))
-
-(defpackage #:alists
-  (:use #:cl)
-  (:export #:aconses))
 
 (defpackage #:dao
   (:use #:cl #:sxql)
@@ -36,7 +39,7 @@
    #:*connection*))
 
 (defpackage #:api
-  (:use #:cl #:snooze #:jsons)
+  (:use #:cl #:snooze #:jsons #:alexandria)
   (:export #:start
            #:stop))
 
@@ -44,3 +47,6 @@
   (:use #:cl)
   (:export #:save)
   (:shadowing-import-from #:spinneret))
+
+(defpackage #:dev.mocks
+  (:use #:cl))
