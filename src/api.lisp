@@ -78,6 +78,8 @@
     "/css/" (fad:pathname-as-directory #P"./resources/css"))
    (hunchentoot:create-folder-dispatcher-and-handler
     "/docs/" (fad:pathname-as-directory #P"./resources/docs"))
+   (hunchentoot:create-folder-dispatcher-and-handler
+    "/webfonts/" (fad:pathname-as-directory #P"./resources/webfonts"))
    (make-hunchentoot-app '((*home-resource* . homepage)))))
 
 (defmethod hunchentoot:acceptor-dispatch-request :around ((a snooze-acceptor) request)
