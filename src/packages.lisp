@@ -50,3 +50,8 @@
 
 (defpackage #:dev.mocks
   (:use #:cl))
+
+(defpackage #:web-site
+  (:use #:cl #:snooze #:jsons #:alexandria #:spinneret)
+  (:export #:start-all
+           #:stop-all))

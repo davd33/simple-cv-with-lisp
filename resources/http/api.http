@@ -1,6 +1,9 @@
 # API DOC
 GET http://localhost:9003/api-doc
 
+# HOME
+GET http://localhost:9003/home
+
 # CREATE DUMB CV
 POST http://localhost:9003/cv
 Content-Type: application/json

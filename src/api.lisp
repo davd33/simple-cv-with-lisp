@@ -59,11 +59,34 @@
     ))
 
 
+;;; UTILITY
+
+(defun lispdoc-root ()
+  (fad:pathname-as-directory
+   (make-pathname :name nil
+                  :type nil
+                  :defaults #.(or *compile-file-truename* *load-truename*))))
+
 ;; START HTTP SERVER
-(defparameter *server-handler* nil)
-(defun start ()
-  (setf *server-handler*
-        (clack:clackup (snooze:make-clack-app) :port 9003)))
+(defclass snooze-acceptor (hunchentoot:easy-acceptor) ())
+
+(defparameter *lispdoc-dispatch-table*
+  (list
+   (hunchentoot:create-folder-dispatcher-and-handler
+    "/images/" (fad:pathname-as-directory #P"./resources/images"))
+   (hunchentoot:create-folder-dispatcher-and-handler
+    "/css/" (fad:pathname-as-directory #P"./resources/css"))
+   (make-hunchentoot-app '((*home-resource* . homepage)))))
+
+(defmethod hunchentoot:acceptor-dispatch-request :around ((a snooze-acceptor) request)
+  (let ((hunchentoot:*dispatch-table* *lispdoc-dispatch-table*))
+    (call-next-method)))
+
+(defvar *server* nil)
+
 (defun stop ()
-  (when *server-handler*
-    (clack:stop *server-handler*)))
+  (when *server* (hunchentoot:stop *server*) (setq *server* nil)))
+
+(defun start (&key (port 5000))
+  (stop)
+  (setq *server* (hunchentoot:start (make-instance 'snooze-acceptor :port port))))

@@ -1,20 +1,11 @@
-(in-package :be-it)
+(in-package #:web-site)
 
-;; DEFINE COMMAND ARGUMENTS
+(defun start-all ()
+  (dao:connect)
+  (api:start))
 
-(opts:define-opts
-  (:name :help
-   :description "Some help here needed." ; TODO manage program arguments.
-   :short #\h
-   :long "help"))
-
-;; TODO
-;; The parameters that we'd be interested for are the following:
-;;  - the language of the page... although we could as well generate as many html files that
-;;    we have from languages
-;;  - the path of the output directory to which the html files should be created
-
-;; SETUP LOCALIZATION
+(defun stop-all ()
+  (api:stop))
 
 (eval-when
     (:compile-toplevel
@@ -39,7 +30,15 @@
     "Get the translation for the given key."
     (getf *lang* key)))
 
-;; DEFINE WEB PAGE COMPONENTS
+(defmacro with-page ((&key title) &body body)
+  `(with-html
+     (:doctype)
+     (:html
+      (:head
+       (:link :href "/css/cv.css" :rel "stylesheet" :type "text/css")
+       (:link :href "/css/font-awesome.css" :rel "stylesheet" :type "text/css")
+       (:title ,title))
+      (:body ,@body))))
 
 (defparameter *page-title* "Davd Rueda")
 
@@ -53,25 +52,14 @@
                 ,@(loop for style in styles
                         collect `(format nil "~a: ~a;~%" ,(string (first style)) ,(second style)))))
 
-(defmacro with-page ((&key title) &body body)
-  `(spinneret:with-html
-     (:doctype)
-     (:html
-      (:head
-       (:link :href "./resources/css/cv.css" :rel "stylesheet" :type "text/css")
-       (:link :href "./resources/css/font-awesome.css" :rel "stylesheet" :type "text/css")
-       (:title ,title))
-      (:body
-       ,@body))))
-
-(spinneret:deftag link (text attrs &key href class)
+(deftag link (text attrs &key href class)
   `(:a.contact-link
     :class ,class
     :href ,href
     ,@attrs
     ,@text))
 
-(spinneret:deftag reading (body attrs &key title image-path ext-link)
+(deftag reading (body attrs &key title image-path ext-link)
   `(:a.book-card
     :style (css
              (:width "200px")
@@ -85,9 +73,9 @@
           :style (css
                    (:margin "0 auto")
                    (:background :darkblue))
-          :src (concat "./resources/images/" ,image-path))))
+          :src (concat "/images/" ,image-path))))
 
-(spinneret:deftag work-experience (body attrs &key title duration desc technologies ref company remote?)
+(deftag work-experience (body attrs &key title duration desc technologies ref company remote?)
   `(:div.card
     (when remote? (:i :style (css (:float :right)) :title "remote position" :class "fal fa-wifi"))
     (:h1 ,title
@@ -100,7 +88,7 @@
            collect (:div.card-tag tech)))
     ,@body))
 
-(spinneret:deftag repeat (template attrs &key for-lang)
+(deftag repeat (template attrs &key for-lang)
   "This is a tag that repeats a given template using the key
    for a translation split into a list of several strings.
      - lang-binding-form: 2 elements list with var name and translation key
@@ -124,13 +112,13 @@
      (link :href (lang-get :contact.linkedin) "Linkedin")
      (link :href (lang-get :contact.fork-project) "(fork-me!)")
      (:span :class "pdf-download-link"
-            (link :href "./resources/cv.david-rueda.pdf" "PDF"))
+            (link :href "/docs/cv.david-rueda.pdf" "PDF"))
      (:section.lang-flags
       (:em "Speaks: Fr / En / Sp / De")))
     (:header.centered                   ; CV TITLE - MY NAME BASICALLY...
      (:img
       :class "cv-img"
-      :src "./resources/images/my.jpg"
+      :src "/images/my.jpg"
       :alt (lang-get :cv.pic.img.alt))
      (:h1 (lang-get :cv.title))
      (:h2 (lang-get :cv.sub-title))
@@ -182,10 +170,8 @@
                paragraph
                :initial-value (:p))))))
 
-(defun save ()
-  (let ((linode-html-file-path "/home/davd/linode/var/www/localhost/htdocs/index.html")
-        (project-html-file-path "/home/davd/clisp/be-it/src/my-cv.html"))
-    (with-open-file (cv-file linode-html-file-path :direction :output
-                                                   :if-exists :supersede)
-      (let ((spinneret:*html* cv-file))
-        (index)))))
+(defroute home
+  (:get "text/html")
+  (with-output-to-string (out)
+   (let ((spinneret:*html* out))
+     (index))))
