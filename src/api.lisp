@@ -76,6 +76,8 @@
     "/images/" (fad:pathname-as-directory #P"./resources/images"))
    (hunchentoot:create-folder-dispatcher-and-handler
     "/css/" (fad:pathname-as-directory #P"./resources/css"))
+   (hunchentoot:create-folder-dispatcher-and-handler
+    "/docs/" (fad:pathname-as-directory #P"./resources/docs"))
    (make-hunchentoot-app '((*home-resource* . homepage)))))
 
 (defmethod hunchentoot:acceptor-dispatch-request :around ((a snooze-acceptor) request)
