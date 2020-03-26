@@ -58,20 +58,20 @@
      (:doctype)
      (:html
       (:head
-       (:link :href "./resources/css/cv.css" :rel "stylesheet" :type "text/css")
-       (:link :href "./resources/css/font-awesome.css" :rel "stylesheet" :type "text/css")
+       (:link :href "/css/cv.css" :rel "stylesheet" :type "text/css")
+       (:link :href "/css/font-awesome.css" :rel "stylesheet" :type "text/css")
        (:title ,title))
       (:body
        ,@body))))
 
-(spinneret:deftag link (text attrs &key href class)
+(deftag link (text attrs &key href class)
   `(:a.contact-link
     :class ,class
     :href ,href
     ,@attrs
     ,@text))
 
-(spinneret:deftag reading (body attrs &key title image-path ext-link)
+(deftag reading (body attrs &key title image-path ext-link)
   `(:a.book-card
     :style (css
              (:width "200px")
@@ -85,9 +85,9 @@
           :style (css
                    (:margin "0 auto")
                    (:background :darkblue))
-          :src (concat "./resources/images/" ,image-path))))
+          :src (concat "/images/" ,image-path))))
 
-(spinneret:deftag work-experience (body attrs &key title duration desc technologies ref company remote?)
+(deftag work-experience (body attrs &key title duration desc technologies ref company remote?)
   `(:div.card
     (when remote? (:i :style (css (:float :right)) :title "remote position" :class "fal fa-wifi"))
     (:h1 ,title
@@ -100,7 +100,7 @@
            collect (:div.card-tag tech)))
     ,@body))
 
-(spinneret:deftag repeat (template attrs &key for-lang)
+(deftag repeat (template attrs &key for-lang)
   "This is a tag that repeats a given template using the key
    for a translation split into a list of several strings.
      - lang-binding-form: 2 elements list with var name and translation key
@@ -124,13 +124,13 @@
      (link :href (lang-get :contact.linkedin) "Linkedin")
      (link :href (lang-get :contact.fork-project) "(fork-me!)")
      (:span :class "pdf-download-link"
-            (link :href "./resources/cv.david-rueda.pdf" "PDF"))
+            (link :href "/pdf/cv.david-rueda.pdf" "PDF"))
      (:section.lang-flags
       (:em "Speaks: Fr / En / Sp / De")))
     (:header.centered                   ; CV TITLE - MY NAME BASICALLY...
      (:img
       :class "cv-img"
-      :src "./resources/images/my.jpg"
+      :src "/images/my.jpg"
       :alt (lang-get :cv.pic.img.alt))
      (:h1 (lang-get :cv.title))
      (:h2 (lang-get :cv.sub-title))

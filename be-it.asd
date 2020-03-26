@@ -4,6 +4,7 @@
   :license "GPLv3"
   :serial t
   :depends-on (#:spinneret
+               #:hunchentoot
                #:snooze
                #:cl-json
                #:clack
@@ -19,7 +20,7 @@
                  (:file "jsons")
                  (:file "hm")
                  (:file "alists")
-                 (:file "html")
+                 (:file "be-it")
                  (:file "dao")
                  (:file "api")
                  (:file "dev.mocks"))))

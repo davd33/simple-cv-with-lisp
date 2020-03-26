@@ -44,9 +44,9 @@
            #:stop))
 
 (defpackage #:be-it
-  (:use #:cl)
-  (:export #:save)
-  (:shadowing-import-from #:spinneret))
+  (:use #:cl #:spinneret)
+  (:export #:save
+           #:index))
 
 (defpackage #:dev.mocks
   (:use #:cl))
