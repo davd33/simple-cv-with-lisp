@@ -1,15 +1,18 @@
+:local = http://localhost:5000
+:api = :local
+
 # API DOC
-GET http://localhost:9003/api-doc
+GET :api/api-doc
 
 # HOME
-GET http://localhost:9003/home
+GET :api/home
 
 # CREATE DUMB CV
-POST http://localhost:9003/cv
+POST :api/cv
 Content-Type: application/json
 
 {
-  "title": "newline350",
+  "title": "newline357",
   "sub-title": "LOL",
   "image-description": "ododododo",
   "contact": {
@@ -153,7 +156,7 @@ Content-Type: application/json
 }
 
 # CREATE MY CV
-POST http://localhost:9003/cv
+POST :api/cv
 Content-Type: application/json
 
 {

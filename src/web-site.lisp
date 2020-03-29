@@ -15,3 +15,7 @@
 (defroute home
   (:get "text/html")
   (build-spinneret-html-response (be-it:index)))
+
+(defroute wcv
+  (:get "text/html")
+  (build-spinneret-html-response (be-it:cv->html "cv of david rueda")))

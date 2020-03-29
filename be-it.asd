@@ -6,9 +6,11 @@
   :depends-on (#:spinneret
                #:hunchentoot
                #:snooze
+               #:dexador
                #:cl-json
                #:clack
                #:fset
+               #:str
                #:mito
                #:sxql
                #:unix-opts
@@ -23,7 +25,9 @@
                  (:file "be-it")
                  (:file "dao")
                  (:file "api")
-                 (:file "dev.mocks"))))
+                 (:file "dev.mocks")
+                 (:file "web-site")
+                 (:file "services"))))
   :description "The Free custom CV compatible with all other CV/jobs plateform."
   :in-order-to ((test-op (test-op "be-it/tests"))))
 

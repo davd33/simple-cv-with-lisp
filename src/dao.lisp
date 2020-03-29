@@ -48,6 +48,14 @@
    (cv :col-type (or cv :null) :references cv))
   (primary-key section paragraph))
 
+;;; PRINTERS
+(defmethod print-object ((cv-obj cv) stream)
+  (print-unreadable-object (cv-obj stream :type t)
+    (with-slots (title contact) cv-obj
+      (with-slots (mail) contact
+        (format stream "~&title = ~A" title)
+        (format stream "~&mail = ~A" mail)))))
+
 ;; Mappers
 (defmacro make-mapper (kind mappings)
   "Return a function of a mapper."
@@ -135,21 +143,6 @@
              (json->dao-mapper-hm mapper))
     dao))
 
-;; UTILITY
-;; (defun cv-obj? (cv)
-;;   "Return T if cv is a cv object."
-;;   (eq 'cv (type-of cv)))
-
-;; (defun not-cv-obj? (cv)
-;;   "Complements cv-obj?"
-;;   (complement #'cv-obj?))
-
-;; (defun print-cv (cv)
-;;   (format t "~&++ CV ++")
-;;   (format t "~& title = ~A" (slot-value cv 'title))
-;;   (format t "~& sub-title = ~A" (slot-value cv 'sub-title))
-;;   (format t "~& image-descrigtion = ~A" (slot-value cv 'image-description)))
-
 ;; CREATE TABLES
 (defun create-table (table-type)
   "Creates the table as defined in the mito:deftable call of the symbol table-type."
@@ -163,20 +156,20 @@
   (create-table 'work-experience)
   (create-table 'cv))
 
-;; some testing
-(defun select-examples ()
+;;; RETRIEVE CV
+(defun retrieve-cv (cv-title)
+  (mito:select-dao 'cv
+    (mito:includes 'contact)
+    (sxql:where (:like :title cv-title))))
 
-  ;; some manual queries
-  (mito:execute-sql (select :*
-                      (from :pca)))
+(defun retrieve-readings (cv-id)
+  (mito:select-dao 'reading
+    (sxql:where (:= :cv_id cv-id))))
 
-  ;; some dao queries
-  (let ((bx (mito:find-dao 'pca :city "Bordeaux")))
-    (format t "~&city = ~A" (slot-value bx 'city)))
+(defun retrieve-work-experiences (cv-id)
+  (mito:select-dao 'work-experience
+    (sxql:where (:= :cv_id cv-id))))
 
-  (let ((all-data (mito:retrieve-dao 'pca)))
-    (when (listp all-data) (format t "received a list"))
-    (loop
-       for city in all-data
-       do (print-pca city)))
-  )
+(defun retrieve-paragraph-elements (cv-id)
+  (mito:select-dao 'paragraph-element
+    (sxql:where (:= :cv_id cv-id))))

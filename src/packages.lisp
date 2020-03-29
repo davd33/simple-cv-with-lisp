@@ -27,7 +27,12 @@
    #:title
    #:sub-title
    #:mail
-   ;; CREATE DAOs
+   ;; RETRIEVE
+   #:retrieve-cv
+   #:retrieve-readings
+   #:retrieve-work-experiences
+   #:retrieve-paragraph-elements
+   ;; INSERT
    #:insert-contact
    #:insert-cv
    #:insert-reading
@@ -38,6 +43,16 @@
    #:create-tables
    #:*connection*))
 
+(defpackage #:api-dtos
+  (:use #:cl)
+  (:export #:contact-dto
+           #:work-experience-dto
+           #:reading-dto
+           #:paragraph-element-dto
+           #:paragraph-dto
+           #:section-dto
+           #:cv-dto))
+
 (defpackage #:api
   (:use #:cl #:snooze #:jsons #:alexandria)
   (:export #:start
@@ -46,12 +61,21 @@
 (defpackage #:be-it
   (:use #:cl #:spinneret)
   (:export #:save
-           #:index))
+           #:index
+           #:with-page
+           #:cv->html))
 
 (defpackage #:dev.mocks
-  (:use #:cl))
+  (:use #:cl)
+  (:export #:api-cv
+           #:home))
 
 (defpackage #:web-site
   (:use #:cl #:snooze #:jsons #:alexandria #:spinneret)
   (:export #:start-all
-           #:stop-all))
+           #:stop-all
+           #:home))
+
+(defpackage #:services
+  (:use #:cl #:jsons #:alexandria #:spinneret #:api-dtos)
+  (:export #:store-cv))

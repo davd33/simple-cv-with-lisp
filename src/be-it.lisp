@@ -182,6 +182,74 @@
                paragraph
                :initial-value (:p))))))
 
+(defun cv->html (cv-name)
+  (let ((whole-cv (services:get-cv cv-name)))
+    (with-page (:title cv-name)
+      (:section.contact                   ; CONTACT & LANG
+       (let ((my-mail (lang-get :contact.mail)))
+         (link :href (concat "mailto:" my-mail) my-mail))
+       (link :href (lang-get :contact.github) "Github")
+       (link :href (lang-get :contact.linkedin) "Linkedin")
+       (link :href (lang-get :contact.fork-project) "(fork-me!)")
+       (:span :class "pdf-download-link"
+              (link :href "/pdf/cv.david-rueda.pdf" "PDF"))
+       (:section.lang-flags
+        (:em "Speaks: Fr / En / Sp / De")))
+      (:header.centered                   ; CV TITLE - MY NAME BASICALLY...
+       (:img
+        :class "cv-img"
+        :src "/images/my.jpg"
+        :alt (lang-get :cv.pic.img.alt))
+       (:h1 (lang-get :cv.title))
+       (:h2 (lang-get :cv.sub-title))
+       (:section                          ; ABOUT ME
+        (repeat
+          :for-lang (about-me :about.me.txt.p)
+          (:p.about-me about-me))))
+      (:h1.centered.dark-title "Work Experiences")
+      (:section.work-exp-cards            ; WORK EXPERIENCE
+       (repeat
+         :for-lang (my-exps :work.experience)
+         (destructuring-bind (&key title ref company desc duration technologies remote?)
+             my-exps
+           (work-experience
+             :title title
+             :ref ref
+             :company company
+             :duration duration
+             :desc desc
+             :technologies technologies))))
+      (:h1.centered "Reading")
+      (:section.books :id "books-section" ; BOOKS THAT I READ
+                      (:div.books
+                       :style (css
+                                (:display :flex)
+                                (:margin-bottom "50px")
+                                (:flex-wrap :wrap)
+                                (:justify-content :center)
+                                (:align-items :baseline))
+                       (repeat :for-lang (books-read :reading)
+                               (destructuring-bind (&key title image-path ext-link)
+                                   books-read
+                                 (reading :title title
+                                          :ext-link ext-link
+                                          :image-path image-path)))))
+      (:h1.centered.dark-title "When I discovered Lisp")
+      (:section.lisp-experience           ; LISP EXPERIENCE
+       (repeat :for-lang (paragraph :my-experience-with-lisp)
+               (reduce #'(lambda (acc curr)     ; TODO create a function
+                           (cons (or (progn
+                                       (when (listp curr)
+                                         (cond
+                                           ((equalp :link (first curr)) (link
+                                                                          :style (css (:margin "0"))
+                                                                          :href (third curr)
+                                                                          (second curr))))))
+                                     (:span curr))
+                                 acc))
+                       paragraph
+                       :initial-value (:p)))))))
+
 (defun save ()
   (let ((linode-html-file-path "/home/davd/linode/var/www/localhost/htdocs/index.html")
         (project-html-file-path "/home/davd/clisp/be-it/src/my-cv.html"))
