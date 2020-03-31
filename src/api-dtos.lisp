@@ -1,5 +1,21 @@
 (in-package #:api-dtos)
 
+(defmacro defprintobj (class-symbol)
+  "Give me a class symbol and I will defmethod a print-object that format every bound field!"
+  (let* ((slot-names-fn (alexandria:compose #'(lambda (slots)
+                                                (mapcar #'(lambda (elt)
+                                                            (closer-mop:slot-definition-name elt))
+                                                        slots))
+                                            #'closer-mop:class-slots
+                                            #'find-class))
+         (fields (funcall slot-names-fn class-symbol)))
+    `(defmethod print-object ((object ,class-symbol) stream)
+       (print-unreadable-object (object stream :type t)
+         (loop for field in ',fields
+            do (alexandria:when-let (f-value (handler-case (slot-value object field)
+                                               (unbound-slot (e) nil)))
+                 (format stream "~&~A = ~A~%" field f-value)))))))
+
 (defclass contact-dto ()
   ((mail :initarg :mail
          :accessor mail
