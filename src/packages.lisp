@@ -51,7 +51,12 @@
            #:paragraph-element-dto
            #:paragraph-dto
            #:section-dto
-           #:cv-dto))
+           #:cv-dto
+           ;; UTIL
+           #:defprintobj
+           ;; FIELDS
+           #:linkedin
+           #:mail))
 
 (defpackage #:api
   (:use #:cl #:snooze #:jsons #:alexandria)
