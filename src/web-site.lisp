@@ -17,5 +17,5 @@
   (build-spinneret-html-response (be-it:index)))
 
 (defroute wcv
-  (:get "text/html")
-  (build-spinneret-html-response (be-it:cv->html "cv of david rueda")))
+  (:get "text/html" cv-name)
+  (build-spinneret-html-response (be-it:cv->html cv-name)))

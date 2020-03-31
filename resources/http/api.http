@@ -7,6 +7,9 @@ GET :api/api-doc
 # HOME
 GET :api/home
 
+# GET A CV BY ID
+GET :api/wcv/newline357
+
 # CREATE DUMB CV
 POST :api/cv
 Content-Type: application/json
