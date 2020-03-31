@@ -15,13 +15,15 @@
                #:sxql
                #:unix-opts
                #:trivia
-               #:alexandria)
+               #:alexandria
+               #:closer-mop)
   :components ((:module "src"
                 :components
                 ((:file "packages")
                  (:file "jsons")
                  (:file "hm")
                  (:file "alists")
+                 (:file "clos-mapping")
                  (:file "be-it")
                  (:file "dao")
                  (:file "api")

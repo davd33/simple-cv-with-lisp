@@ -76,6 +76,10 @@
            #:stop-all
            #:home))
 
+(defpackage #:clos-mapping
+  (:use #:cl #:alexandria)
+  (:export #:make-mapper))
+
 (defpackage #:services
   (:use #:cl #:jsons #:alexandria #:spinneret #:api-dtos)
   (:export #:store-cv))
