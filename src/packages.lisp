@@ -52,8 +52,6 @@
            #:paragraph-dto
            #:section-dto
            #:cv-dto
-           ;; UTIL
-           #:defprintobj
            ;; FIELDS
            #:linkedin
            #:mail))
@@ -83,7 +81,8 @@
 
 (defpackage #:clos-mapping
   (:use #:cl #:alexandria)
-  (:export #:make-mapper))
+  (:export #:make-mapper
+           #:defprintobj))
 
 (defpackage #:services
   (:use #:cl #:jsons #:alexandria #:spinneret #:api-dtos)
