@@ -14,6 +14,11 @@
   (:export #:hm-put
            #:hm-get))
 
+(defpackage #:clos-mapping
+  (:use #:cl #:alexandria)
+  (:export #:make-mapper
+           #:defprintobj))
+
 (defpackage #:dao
   (:use #:cl #:sxql)
   (:export
@@ -79,11 +84,7 @@
            #:stop-all
            #:home))
 
-(defpackage #:clos-mapping
-  (:use #:cl #:alexandria)
-  (:export #:make-mapper
-           #:defprintobj))
-
 (defpackage #:services
   (:use #:cl #:jsons #:alexandria #:spinneret #:api-dtos)
-  (:export #:store-cv))
+  (:export #:store-cv
+           #:get-cv))

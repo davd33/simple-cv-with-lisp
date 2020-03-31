@@ -20,13 +20,14 @@
   :components ((:module "src"
                 :components
                 ((:file "packages")
+                 (:file "alists")
                  (:file "jsons")
                  (:file "hm")
-                 (:file "alists")
                  (:file "clos-mapping")
-                 (:file "be-it")
                  (:file "dao")
+                 (:file "api-dtos")
                  (:file "api")
+                 (:file "be-it")
                  (:file "dev.mocks")
                  (:file "web-site")
                  (:file "services"))))
