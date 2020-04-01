@@ -14,6 +14,13 @@
   (:export #:hm-put
            #:hm-get))
 
+(defpackage #:memoize
+  (:use #:cl #:alexandria)
+  (:export #:memo
+           #:memoize
+           #:clear-memoize
+           #:defmemo))
+
 (defpackage #:clos-mapping
   (:use #:cl #:alexandria)
   (:export #:make-mapper

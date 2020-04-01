@@ -23,6 +23,7 @@
                  (:file "alists")
                  (:file "jsons")
                  (:file "hm")
+                 (:file "memoize")
                  (:file "clos-mapping")
                  (:file "dao")
                  (:file "api-dtos")
