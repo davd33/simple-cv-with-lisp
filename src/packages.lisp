@@ -21,6 +21,17 @@
            #:clear-memoize
            #:defmemo))
 
+(defpackage #:pipe
+  (:use #:cl)
+  (:export #:delay
+           #:force
+           #:make-pipe
+           #:empty-pipe
+           #:head
+           #:tail
+           #:pipe-elt
+           #:integers))
+
 (defpackage #:clos-mapping
   (:use #:cl #:alexandria)
   (:export #:make-mapper
