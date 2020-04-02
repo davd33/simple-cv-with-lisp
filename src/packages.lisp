@@ -30,7 +30,8 @@
            #:head
            #:tail
            #:pipe-elt
-           #:integers))
+           #:integers
+           #:foreach))
 
 (defpackage #:clos-mapping
   (:use #:cl #:alexandria)

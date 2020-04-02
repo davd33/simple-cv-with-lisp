@@ -43,3 +43,29 @@ If END is nil, this is an infinite pipe."
   (if (or (null end) (<= start end))
       (make-pipe start (integers (+ start 1) end))
       nil))
+
+(defun foreach (pipe &key count do (result pipe))
+  "Go through all (or COUNT) elements of PIPE,
+possibly applying the DO function (Try PRINT.)
+Take care of providing a COUNT parameter (integer) for infinite pipes."
+  ;; Returns RESULT, which defaults to the pipe itself
+  (labels ((next-count (c)
+             (cond ((> c 0) (1- c))
+                   ((< c 0) (1+ c))
+                   (t c))))
+    (if (or (eq pipe empty-pipe)
+            (eql count 0))
+        result
+        (progn
+          (unless (null do) (funcall do (head pipe)))
+          (foreach (tail pipe) :count (if count (next-count count))
+                   :do do :result result)))))
+
+;;; TODO
+(defun filter (pred pipe &key count)
+  "Keep only items in PIPE satisfying PRED.
+Filter all (or COUNT) items."
+  (if (and count (funcall pred (head pipe)))
+      (make-pipe (head pipe)
+                 (filter pred (tail pipe)))
+      (filter pred (tail pipe))))
