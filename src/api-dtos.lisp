@@ -45,7 +45,7 @@
           :documentation "Order of this element within the paragraph.")
    (content :initarg :content
             :accessor content
-            :documentation "Contents can be a string or an alist of strings.")))
+            :documentation "Contents can be a string or an alist (JSON object).")))
 
 (defclass paragraph-dto ()
   ((elements :initarg :elements
