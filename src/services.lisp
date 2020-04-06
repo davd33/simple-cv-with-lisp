@@ -2,27 +2,50 @@
 
 (defun get-cv (cv-title)
   "Retrieves CV in DB by title."
-  (handler-case (let* (;; RETRIEVE ALL DATA
-                       (cv-dao (dao:retrieve-cv cv-title))
-                       (cv-id (slot-value cv-dao 'id))
-                       (readings (dao:retrieve-readings cv-id))
-                       (work-experiences (dao:retrieve-work-experiences cv-id))
-                       (paragraph-elements (dao:retrieve-paragraph-elements cv-id))
-                       ;; CREATE NEEDED MAPPERS
-                       (reading-dao->dto (clos-mapping:make-mapper
-                                             dao:reading
-                                             api-dtos:reading-dto))
-                       (work-experience-dao->dto (clos-mapping:make-mapper
-                                                     dao:work-experience
-                                                     api-dtos:work-experience-dto))
-                       (reading-dao->dto (clos-mapping:make-mapper
-                                             dao:reading
-                                             api-dtos:reading-dto))
+  (handler-case (let* ((cv-dao (first (dao:retrieve-cv cv-title)))
+                       (cv-id (slot-value cv-dao 'mito.dao.mixin::id))
+
+                       (work-experience-dtos (mapcar (clos-mapping:make-mapper
+                                                         dao:work-experience
+                                                         api-dtos:work-experience-dto)
+                                                     (dao:retrieve-work-experiences cv-id)))
+
+                       (reading-dtos (mapcar (clos-mapping:make-mapper
+                                                 dao:reading
+                                                 api-dtos:reading-dto)
+                                             (dao:retrieve-readings cv-id)))
+
+                       (paragraph-element-dtos
+                        ;; WE GROUP BY SECTION THE RESULT OF RETRIEVING PARAGRAPH-ELEMENTS FROM THE DB
+                        (let ((grouped-by-section (data:group-by (dao:retrieve-paragraph-elements cv-id)
+                                                                 :kv-pair #'(lambda (x)
+                                                                              (list (slot-value x 'dao:section) x)))))
+                          (reduce #'(lambda (sections p-elts-dao)
+                                      (cons (let ((section (make-instance 'api-dtos:section-dto))
+                                                  (section-title (slot-value (first p-elts-dao) 'dao:section))
+                                                  ;; WE GROUP BY PARAGRAPH NAME
+                                                  (grouped-by-p (data:group-by p-elts-dao
+                                                                               :kv-pair #'(lambda (x)
+                                                                                            (list (slot-value x 'dao:paragraph) x)))))
+                                              (setf (api-dtos:title section) section-title))
+                                              (loop
+                                                 for paragraph in (reduce #'(lambda (paragraphs p-elts-dao2)
+                                                                              (cons (let ((paragraph (make-instance 'api-dtos:paragraph-dto)))
+                                                                                      (...todo...))
+                                                                                    paragraphs))
+                                                                          grouped-by-p
+                                                                          :initial-value (list))
+                                                 do (...todo...)))
+                                            sections))
+                                  grouped-by-section
+                                  :initial-value (list))))
+
                        (cv-dao->dto (clos-mapping:make-mapper
                                         dao:cv
-                                        api-dtos:cv-dto))
+                                        api-dtos:cv-dto
+                                      (with-computed-slot 'work-experiences work-experience-dto)))
                        ;; BUILD CV DTO
-                       (cv-dto (funcall cv-dao->dto)))
+                       (cv-dto (funcall cv-dao->dto cv-dao)))
                   "CV DTO has been retrieved!")
     (dbi.error:<dbi-database-error> (e)
       (format t "~&error while retrieving CV '~A': ~A" cv-title e)
