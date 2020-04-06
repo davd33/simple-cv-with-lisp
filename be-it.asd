@@ -23,6 +23,7 @@
                  (:file "alists")
                  (:file "jsons")
                  (:file "hm")
+                 (:file "data")
                  (:file "memoize")
                  (:file "pipe")
                  (:file "clos-mapping")

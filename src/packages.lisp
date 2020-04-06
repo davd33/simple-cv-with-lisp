@@ -12,7 +12,12 @@
 (defpackage #:hm
   (:use #:cl)
   (:export #:hm-put
-           #:hm-get))
+           #:hm-get
+           #:hm-print-elt))
+
+(defpackage #:data
+  (:use #:cl #:alexandria)
+  (:export #:group-by))
 
 (defpackage #:memoize
   (:use #:cl #:alexandria)
@@ -51,6 +56,9 @@
    #:title
    #:sub-title
    #:mail
+   #:id
+   #:section
+   #:paragraph
    ;; RETRIEVE
    #:retrieve-cv
    #:retrieve-readings
@@ -76,6 +84,8 @@
            #:paragraph-dto
            #:section-dto
            #:cv-dto
+           ;; ACCESSORS
+           #:title
            ;; FIELDS
            #:linkedin
            #:mail))
