@@ -43,15 +43,12 @@
 
 (defparameter *page-title* "Davd Rueda")
 
-(defmacro concat (&body body)
-  `(concatenate 'string ,@body))
-
 (defmacro css (&body styles)
   "Takes 1..n CSS instructions as 2-elements lists, then returns a css formatted string.
    A CSS instruction list looks like this: (:font-size <string>)"
-  `(concatenate 'string
-                ,@(loop for style in styles
-                        collect `(format nil "~a: ~a;~%" ,(string (first style)) ,(second style)))))
+  `(str:concat
+     ,@(loop for style in styles
+          collect `(format nil "~a: ~a;~%" ,(string (first style)) ,(second style)))))
 
 (defmacro with-page ((&key title) &body body)
   `(spinneret:with-html
@@ -85,7 +82,7 @@
           :style (css
                    (:margin "0 auto")
                    (:background :darkblue))
-          :src (concat "/images/" ,image-path))))
+          :src (str:concat "/images/" ,image-path))))
 
 (deftag work-experience (body attrs &key title duration desc technologies ref company remote?)
   `(:div.card
@@ -100,26 +97,30 @@
            collect (:div.card-tag tech)))
     ,@body))
 
-(deftag repeat (template attrs &key for-lang)
+(deftag repeat (template attrs &key for-lang direct-mode)
   "This is a tag that repeats a given template using the key
-   for a translation split into a list of several strings.
-     - lang-binding-form: 2 elements list with var name and translation key
-     - template: a single form (one list of potentially embedded tags)"
-  (let ((lang-var-name (first for-lang))
-        (lang-key (second for-lang)))
+for a translation split into a list of several strings.
+  - for-lang: lang-binding-form: 2 elements list with var name and translation key
+  - template: a single form (one list of potentially embedded tags)
+  - direct-mode: when not nil, for-lang designate the value to iterate over"
+  (let ((var-name (first for-lang))
+        (lang-key-or-value (second for-lang)))
+
     (reduce #'(lambda (tag-product translation-value)
                 (append
                  tag-product
-                 `((let ((,lang-var-name ,translation-value))
+                 `((let ((,var-name ,translation-value))
                      ,@template))))
-            (lang-get lang-key)
+            (if (null direct-mode)
+                (lang-get lang-key-or-value)
+                lang-key-or-value)
             :initial-value `(progn))))
 
 (defun index ()
   (with-page (:title *page-title*)
     (:section.contact                   ; CONTACT & LANG
      (let ((my-mail (lang-get :contact.mail)))
-       (link :href (concat "mailto:" my-mail) my-mail))
+       (link :href (str:concat "mailto:" my-mail) my-mail))
      (link :href (lang-get :contact.github) "Github")
      (link :href (lang-get :contact.linkedin) "Linkedin")
      (link :href (lang-get :contact.fork-project) "(fork-me!)")
@@ -183,72 +184,94 @@
                :initial-value (:p))))))
 
 (defun cv->html (cv-name)
-  (let ((whole-cv (services:get-cv cv-name)))
-    (with-page (:title cv-name)
-      (:section.contact                   ; CONTACT & LANG
-       (let ((my-mail (lang-get :contact.mail)))
-         (link :href (concat "mailto:" my-mail) my-mail))
-       (link :href (lang-get :contact.github) "Github")
-       (link :href (lang-get :contact.linkedin) "Linkedin")
-       (link :href (lang-get :contact.fork-project) "(fork-me!)")
-       (:span :class "pdf-download-link"
-              (link :href "/pdf/cv.david-rueda.pdf" "PDF"))
-       (:section.lang-flags
-        (:em "Speaks: Fr / En / Sp / De")))
-      (:header.centered                   ; CV TITLE - MY NAME BASICALLY...
-       (:img
-        :class "cv-img"
-        :src "/images/my.jpg"
-        :alt (lang-get :cv.pic.img.alt))
-       (:h1 (lang-get :cv.title))
-       (:h2 (lang-get :cv.sub-title))
-       (:section                          ; ABOUT ME
-        (repeat
-          :for-lang (about-me :about.me.txt.p)
-          (:p.about-me about-me))))
-      (:h1.centered.dark-title "Work Experiences")
-      (:section.work-exp-cards            ; WORK EXPERIENCE
-       (repeat
-         :for-lang (my-exps :work.experience)
-         (destructuring-bind (&key title ref company desc duration technologies remote?)
-             my-exps
-           (work-experience
-             :title title
-             :ref ref
-             :company company
-             :duration duration
-             :desc desc
-             :technologies technologies))))
-      (:h1.centered "Reading")
-      (:section.books :id "books-section" ; BOOKS THAT I READ
-                      (:div.books
-                       :style (css
-                                (:display :flex)
-                                (:margin-bottom "50px")
-                                (:flex-wrap :wrap)
-                                (:justify-content :center)
-                                (:align-items :baseline))
-                       (repeat :for-lang (books-read :reading)
-                               (destructuring-bind (&key title image-path ext-link)
-                                   books-read
-                                 (reading :title title
-                                          :ext-link ext-link
-                                          :image-path image-path)))))
-      (:h1.centered.dark-title "When I discovered Lisp")
-      (:section.lisp-experience           ; LISP EXPERIENCE
-       (repeat :for-lang (paragraph :my-experience-with-lisp)
-               (reduce #'(lambda (acc curr)     ; TODO create a function
-                           (cons (or (progn
-                                       (when (listp curr)
-                                         (cond
-                                           ((equalp :link (first curr)) (link
-                                                                          :style (css (:margin "0"))
-                                                                          :href (third curr)
-                                                                          (second curr))))))
-                                     (:span curr))
-                                 acc))
-                       paragraph
-                       :initial-value (:p)))))))
+  (with-slots ((cv-title dto:title)
+               (cv-sub-title dto:sub-title)
+               (cv-img-desc dto:image-description)
+               (cv-contact dto:contact)
+               (cv-sections dto:sections)
+               (cv-we dto:work-experiences)) (services:get-cv cv-name)
+
+    (with-slots ((we-title dto:title)
+                 (we-company dto:company)
+                 (we-description dto:description)
+                 (we-duration dto:duration)
+                 (we-technologies dto:technologies)) cv-we
+
+      (with-slots ((co-mail dto:mail)
+                   (co-github dto:github)
+                   (co-linkedin dto:linkedin)) cv-contact
+
+        (with-page (:title cv-title)
+
+          ;; CONTACT & LANG
+          (:section.contact
+           (link :href (str:concat "mailto:" co-mail) co-mail)
+           (link :href co-github "Github")
+           (link :href co-linkedin "Linkedin")
+           (link :href "https://github.com/davd33/simple-cv-with-lisp" "(fork-me!)")
+           (:span :class "pdf-download-link"
+                  (link :href "/pdf/cv.david-rueda.pdf" "PDF"))
+           (:section.lang-flags
+            (:em "Speaks: Fr / En / Sp / De")))
+
+          ;; CV TITLE - MY NAME BASICALLY...
+          (:header.centered
+           (:img
+            :class "cv-img"
+            :src "/images/my.jpg"
+            :alt cv-img-desc)
+           (:h1 cv-title)
+           (:h2 cv-sub-title)
+
+           ;; ABOUT ME
+           (:section
+            (repeat
+              :for-lang (about-me (find "about.me.txt.p" sections
+                                        :key #'dto:title :test #'string=))
+              (:p.about-me about-me))))
+          (:h1.centered.dark-title "Work Experiences")
+          (:section.work-exp-cards      ; WORK EXPERIENCE
+           (repeat
+             :for-lang (my-exps :work.experience)
+             (destructuring-bind (&key title ref company desc duration technologies remote?)
+                 my-exps
+               (work-experience
+                 :title title
+                 :ref ref
+                 :company company
+                 :duration duration
+                 :desc desc
+                 :technologies technologies))))
+          (:h1.centered "Reading")
+          (:section.books :id "books-section" ; BOOKS THAT I READ
+                          (:div.books
+                           :style (css
+                                    (:display :flex)
+                                    (:margin-bottom "50px")
+                                    (:flex-wrap :wrap)
+                                    (:justify-content :center)
+                                    (:align-items :baseline))
+                           (repeat :for-lang (books-read :reading)
+                                   (destructuring-bind (&key title image-path ext-link)
+                                       books-read
+                                     (reading :title title
+                                              :ext-link ext-link
+                                              :image-path image-path)))))
+          (:h1.centered.dark-title "When I discovered Lisp")
+          (:section.lisp-experience     ; LISP EXPERIENCE
+           (repeat :for-lang (paragraph :my-experience-with-lisp)
+                   (reduce #'(lambda (acc curr) ; TODO create a function
+                               (cons (or (progn
+                                           (when (listp curr)
+                                             (cond
+                                               ((equalp :link (first curr)) (link
+                                                                              :style (css (:margin "0"))
+                                                                              :href (third curr)
+                                                                              (second curr))))))
+                                         (:span curr))
+                                     acc))
+                           paragraph
+                           :initial-value (:p)))))))))
 
 (defun save ()
   (let ((linode-html-file-path "/home/davd/linode/var/www/localhost/htdocs/index.html")
