@@ -12,11 +12,14 @@
 (defpackage #:hm
   (:use #:cl)
   (:shadow #:get
-           #:reduce)
+           #:reduce
+           #:first)
   (:export #:put
            #:get
+           #:one
            #:reduce
-           #:print-elt))
+           #:print-elt
+           #:print-all))
 
 (defpackage #:data
   (:use #:cl #:alexandria)
