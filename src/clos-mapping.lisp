@@ -52,7 +52,7 @@ Available functions in the body:
                                                    (string= (string elt1)
                                                             (string elt2)))))
                            (from-value (handler-case (slot-value from-obj from-s)
-                                         (unbound-slot (e) nil))))
+                                         (unbound-slot () nil))))
                  (setf (slot-value to-obj to-s) from-value)))
          (labels ((with-renamed-slot (old-name new-name)
                     (setf (slot-value to-obj new-name)

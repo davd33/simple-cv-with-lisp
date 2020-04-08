@@ -11,9 +11,12 @@
 
 (defpackage #:hm
   (:use #:cl)
-  (:export #:hm-put
-           #:hm-get
-           #:hm-print-elt))
+  (:shadow #:get
+           #:reduce)
+  (:export #:put
+           #:get
+           #:reduce
+           #:print-elt))
 
 (defpackage #:data
   (:use #:cl #:alexandria)
@@ -41,7 +44,9 @@
 (defpackage #:clos-mapping
   (:use #:cl #:alexandria)
   (:export #:make-mapper
-           #:defprintobj))
+           #:defprintobj
+           #:with-computed-slot
+           #:with-renamed-slot))
 
 (defpackage #:dao
   (:use #:cl #:sxql)
@@ -86,9 +91,14 @@
            #:cv-dto
            ;; ACCESSORS
            #:title
-           ;; FIELDS
+           #:sections
+           #:paragraphs
+           #:elements
+           #:content
            #:linkedin
-           #:mail))
+           #:mail
+           #:work-experiences
+           #:readings))
 
 (defpackage #:api
   (:use #:cl #:snooze #:jsons #:alexandria)
@@ -114,6 +124,6 @@
            #:home))
 
 (defpackage #:services
-  (:use #:cl #:jsons #:alexandria #:spinneret #:api-dtos)
+  (:use #:cl #:jsons #:alexandria #:spinneret)
   (:export #:store-cv
            #:get-cv))

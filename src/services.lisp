@@ -15,38 +15,48 @@
                                                  api-dtos:reading-dto)
                                              (dao:retrieve-readings cv-id)))
 
-                       (paragraph-element-dtos
+                       (section-dtos
                         ;; WE GROUP BY SECTION THE RESULT OF RETRIEVING PARAGRAPH-ELEMENTS FROM THE DB
                         (let ((grouped-by-section (data:group-by (dao:retrieve-paragraph-elements cv-id)
                                                                  :kv-pair #'(lambda (x)
                                                                               (list (slot-value x 'dao:section) x)))))
-                          (reduce #'(lambda (sections p-elts-dao)
-                                      (cons (let ((section (make-instance 'api-dtos:section-dto))
-                                                  (section-title (slot-value (first p-elts-dao) 'dao:section))
-                                                  ;; WE GROUP BY PARAGRAPH NAME
-                                                  (grouped-by-p (data:group-by p-elts-dao
-                                                                               :kv-pair #'(lambda (x)
-                                                                                            (list (slot-value x 'dao:paragraph) x)))))
-                                              (setf (api-dtos:title section) section-title))
-                                              (loop
-                                                 for paragraph in (reduce #'(lambda (paragraphs p-elts-dao2)
-                                                                              (cons (let ((paragraph (make-instance 'api-dtos:paragraph-dto)))
-                                                                                      (...todo...))
-                                                                                    paragraphs))
-                                                                          grouped-by-p
-                                                                          :initial-value (list))
-                                                 do (...todo...)))
-                                            sections))
-                                  grouped-by-section
-                                  :initial-value (list))))
+                          (hm:reduce #'(lambda (sections k p-elts-dao)
+                                         (cons (let ((section (make-instance 'api-dtos:section-dto))
+                                                     (section-title (slot-value (first p-elts-dao) 'dao:section))
+                                                     ;; WE GROUP BY PARAGRAPH NAME
+                                                     (grouped-by-p (data:group-by p-elts-dao
+                                                                                  :kv-pair #'(lambda (x)
+                                                                                               (list (slot-value x 'dao:paragraph) x)))))
+                                                 (setf (api-dtos:title section) section-title)
+                                                 (setf (api-dtos:paragraphs section)
+                                                       (hm:reduce #'(lambda (paragraphs k p-elts-dao2)
+                                                                      (cons (let ((paragraph (make-instance 'api-dtos:paragraph-dto)))
+                                                                              (setf (api-dtos:elements paragraph)
+                                                                                    (mapcar (clos-mapping:make-mapper
+                                                                                                dao:paragraph-element
+                                                                                                api-dtos:paragraph-element-dto)
+                                                                                            p-elts-dao2))
+                                                                              paragraph)
+                                                                            paragraphs))
+                                                                  grouped-by-p
+                                                                  (list)))
+                                                 section)
+                                               sections)
+                                         sections)
+                                     grouped-by-section
+                                     (list))))
 
-                       (cv-dao->dto (clos-mapping:make-mapper
-                                        dao:cv
-                                        api-dtos:cv-dto
-                                      (with-computed-slot 'work-experiences work-experience-dto)))
                        ;; BUILD CV DTO
-                       (cv-dto (funcall cv-dao->dto cv-dao)))
-                  "CV DTO has been retrieved!")
+                       (cv-dto (funcall (clos-mapping:make-mapper
+                                            dao:cv
+                                            api-dtos:cv-dto
+                                          (clos-mapping:with-computed-slot 'api-dtos:work-experiences work-experience-dtos)
+                                          (clos-mapping:with-computed-slot 'api-dtos:readings reading-dtos)
+                                          (clos-mapping:with-computed-slot 'api-dtos:sections section-dtos))
+                                        cv-dao)))
+
+                  cv-dto)
+
     (dbi.error:<dbi-database-error> (e)
       (format t "~&error while retrieving CV '~A': ~A" cv-title e)
       (format nil "ERROR DB: ~A" e))))

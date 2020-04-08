@@ -62,7 +62,6 @@
 
 (defclass cv-dto ()
   ((title :initarg :title
-          :initform (error "Must supply a title.")
           :accessor title
           :documentation "Title of the CV.")
    (sub-title :initarg :subtitle
@@ -80,6 +79,6 @@
    (readings :initarg :readings
              :accessor readings
              :documentation "Books / content read and of interest.")
-   (paragraphs :initarg :paragraphs
-               :accessor paragraphs
-               :documentation "Text sections of the CV.")))
+   (sections :initarg :sections
+             :accessor sections
+             :documentation "Text sections of the CV.")))

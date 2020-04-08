@@ -48,19 +48,11 @@
    (cv :col-type (or cv :null) :references cv))
   (primary-key section paragraph))
 
-;;; PRINTERS
-(defmethod print-object ((cv-obj cv) stream)
-  (print-unreadable-object (cv-obj stream :type t)
-    (with-slots (title contact) cv-obj
-      (with-slots (mail) contact
-        (format stream "~&title = ~A" title)
-        (format stream "~&mail = ~A" mail)))))
-
 ;; Mappers
 (defmacro make-mapper (kind mappings)
   "Return a function of a mapper."
   `(let ((map (make-hash-table)))
-     ,@(reduce #'(lambda (acc curr) (append acc `((hm:hm-put map ,@curr))))
+     ,@(reduce #'(lambda (acc curr) (append acc `((hm:put map ,@curr))))
                mappings
                :initial-value `())
      (make-json->dao-mapper :hm map
