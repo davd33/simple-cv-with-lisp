@@ -1,4 +1,4 @@
-(in-package #:clos-mapping)
+(in-package #:mop)
 
 (defmacro defprintobj (class-symbol)
   "Give me a class symbol and I will defmethod a print-object that format every bound field!"

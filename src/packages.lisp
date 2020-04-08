@@ -44,7 +44,7 @@
            #:integers
            #:foreach))
 
-(defpackage #:clos-mapping
+(defpackage #:mop
   (:use #:cl #:alexandria)
   (:export #:make-mapper
            #:defprintobj
@@ -83,7 +83,7 @@
    #:create-tables
    #:*connection*))
 
-(defpackage #:api-dtos
+(defpackage #:dto
   (:use #:cl)
   (:export #:contact-dto
            #:work-experience-dto
@@ -94,12 +94,23 @@
            #:cv-dto
            ;; ACCESSORS
            #:title
+           #:sub-title
+           #:image
+           #:image-description
+           #:external-url
+           #:order
+           #:contact
+           #:company
+           #:description
+           #:duration
+           #:technologies
            #:sections
            #:paragraphs
            #:elements
            #:content
            #:linkedin
            #:mail
+           #:github
            #:work-experiences
            #:readings))
 

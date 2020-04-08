@@ -1,4 +1,4 @@
-(in-package #:api-dtos)
+(in-package #:dto)
 
 (defclass contact-dto ()
   ((mail :initarg :mail
