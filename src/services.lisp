@@ -41,8 +41,7 @@
                                                                   grouped-by-p
                                                                   (list)))
                                                  section)
-                                               sections)
-                                         sections)
+                                               sections))
                                      grouped-by-section
                                      (list))))
 
