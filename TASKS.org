@@ -22,3 +22,8 @@
 ** TODO Run server and create POST route
 
    (clack:clackup (snooze:make-clack-app) :port 9003)
+
+** TODO Write tests for #:SERVICES
+
+   Need to  write good tests  for package #:SERVICES so  that refactoring
+   doesn't break current working features.
