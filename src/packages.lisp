@@ -49,6 +49,7 @@
   (:export #:make-mapper
            #:defprintobj
            #:with-computed-slot
+           #:with-mapped-slot
            #:with-renamed-slot))
 
 (defpackage #:dao

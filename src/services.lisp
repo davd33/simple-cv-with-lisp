@@ -49,6 +49,7 @@
                        (cv-dto (funcall (mop:make-mapper
                                             dao:cv
                                             dto:cv-dto
+                                          (mop:with-mapped-slot 'dao:contact 'dto:contact (mop:make-mapper dao:contact dto:contact-dto))
                                           (mop:with-computed-slot 'dto:work-experiences work-experience-dto)
                                           (mop:with-computed-slot 'dto:readings reading-dto)
                                           (mop:with-computed-slot 'dto:sections section-dto))

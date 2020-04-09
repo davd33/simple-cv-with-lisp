@@ -29,6 +29,8 @@ Available functions in the body:
   WITH-RENAMED-SLOT (old-name new-name)
     Copies the value of the 'old-name' slot in the from object to the 'new-name' slot of
     the destination object.
+  WITH-MAPPED-SLOT (old-name new-name mapper)
+    Use MAPPER to map value in OLD-NAME to NEW-NAME in the destination object.
   WITH-COMPUTED-SLOT (slot-name value)
     Sets value of the 'slot-name' slot of the destination object to 'value'."
   (let* ((slot-names-fn (compose #'(lambda (slots)
@@ -57,6 +59,9 @@ Available functions in the body:
          (labels ((with-renamed-slot (old-name new-name)
                     (setf (slot-value to-obj new-name)
                           (slot-value from-obj old-name)))
+                  (with-mapped-slot (old-name new-name mapper)
+                    (setf (slot-value to-obj new-name)
+                          (funcall mapper (slot-value from-obj old-name))))
                   (with-computed-slot (slot-name value)
                     (setf (slot-value to-obj slot-name)
                           value)))
