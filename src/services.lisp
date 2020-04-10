@@ -104,7 +104,7 @@
                                      (jsons:add-value (length paragraph-elements) response
                                                       :created :paragraphs-elements)))
                          (response (when cv
-                                     (jsons:add-value (slot-value (car (dao:retrieve-cv 1)) 'mito.dao.mixin::id)
+                                     (jsons:add-value (slot-value cv 'mito.dao.mixin::id)
                                                       response
                                                       :created :cv-id))))
                     (json:encode-json-alist-to-string response)))
