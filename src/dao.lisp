@@ -21,8 +21,7 @@
   ((title :col-type (:varchar 255))
    (sub-title :col-type (:varchar 255))
    (image-description :col-type (:varchar 255))
-   (contact :col-type (or contact :null) :references contact))
-  (:unique-keys title))
+   (contact :col-type (or contact :null) :references contact)))
 
 ;; What books I've been reading
 (mito:deftable reading ()

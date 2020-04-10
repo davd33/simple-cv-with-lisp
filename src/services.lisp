@@ -93,7 +93,7 @@
                                                                       `(:content ,(json:encode-json-to-string
                                                                                    (get-in p-elt :content)))
                                                                       `(:cv ,cv)))))))
-                  (let* ((response (acons :command "Create CV." nil))
+                  (let* ((response (acons :command "create-cv" nil))
                          (response (when readings
                                      (jsons:add-value (length readings) response
                                                       :created :readings)))
@@ -104,8 +104,9 @@
                                      (jsons:add-value (length paragraph-elements) response
                                                       :created :paragraphs-elements)))
                          (response (when cv
-                                     (jsons:add-value "CV Stored" response
-                                                      :created :cv))))
+                                     (jsons:add-value (slot-value (car (dao:retrieve-cv 1)) 'mito.dao.mixin::id)
+                                                      response
+                                                      :created :cv-id))))
                     (json:encode-json-alist-to-string response)))
     (dbi.error:<dbi-database-error> (e)
       (format t "~&error during CV creation: ~A" e)

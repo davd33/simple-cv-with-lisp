@@ -233,7 +233,7 @@ Content-Type: application/json
       ]
     }
   ],
-  "reading": [
+  "readings": [
     {
       "title": "Practical Common Lisp",
       "image": "practical-common-lisp.cover.gif",
@@ -314,22 +314,27 @@ Content-Type: application/json
       "section": "about.me.txt.p",
       "elements": [
         {
+          "paragraph": "1",
           "order": 1,
           "content": "Free software is Love."
         },
         {
+          "paragraph": "1",
           "order": 2,
           "content": "For a better quality, for more security and for a better respect of human rights. It is the way to go if we want to have a chance to evolve our consciousness as a society and as individuals."
         },
         {
+          "paragraph": "1",
           "order": 3,
           "content": "I've been working in different areas. From computational biology in bio-image recognition to the space industry with the automation of the Galileo satellite fleet and the maintenance of ESA's SCOS-2000 and now in Finance, I've been through different aspects of developing IT products."
         },
         {
+          "paragraph": "1",
           "order": 4,
           "content": "Communication with transparency and benevolance is the absolute must for a healthy work collaboration."
         },
         {
+          "paragraph": "1",
           "order": 5,
           "content": "And Lisp is the fatal weapon."
         }
