@@ -27,3 +27,8 @@
 
    Need to  write good tests  for package #:SERVICES so  that refactoring
    doesn't break current working features.
+
+** TODO Service - create cv
+
+   Ensure data structure of received JSON.
+   Needs to ensure that the mandatory fields are there.

@@ -110,7 +110,7 @@
 (deftag work-experience (body attrs &key work-experience)
   "Displays a work experience."
   `(with-slots ((title dto:title)
-                (company dto:company)
+                ;; (company dto:company)
                 (desc dto:description)
                 ;; (duration dto:duration)
                 ;; (remote? dto:remote?)
@@ -126,7 +126,7 @@
         (:h1 title
              ;; (when ,ref (link :class "work-reference" :href ref "SEE REFERENCE"))
              )
-        (:h4 company)
+        ;; (when company (:h4 company))
         ;; (:em duration)
         (:p desc)
         (:div.card-tags
@@ -148,6 +148,7 @@ for a translation split into a list of several strings.
            :initial-value `(progn)))
 
 (defun cv->html (cv-title cv)
+  "Converts a DTO:CV-DTO to html."
   (with-page (:title cv-title)
     (labels ((paragraphs-by-section-title (sections title)
                "Find a DTO:SECTION-DTO in a list of sections by DTO:TITLE."

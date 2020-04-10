@@ -14,7 +14,7 @@
 
 (defroute home
   (:get "text/html")
-  (build-spinneret-html-response (be-it:index)))
+  "It works!")
 
 (defroute wcv
   (:get "text/html" cv-id)
