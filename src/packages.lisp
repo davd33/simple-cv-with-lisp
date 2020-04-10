@@ -53,7 +53,7 @@
            #:with-renamed-slot))
 
 (defpackage #:dao
-  (:use #:cl #:sxql)
+  (:use #:cl)
   (:export
    ;; ENTITIES
    #:contact

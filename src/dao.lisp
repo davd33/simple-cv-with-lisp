@@ -34,9 +34,10 @@
 ;; The professional experience
 (mito:deftable work-experience ()
   ((title :col-type (:varchar 255))
-   (company :col-type (:varchar 255))
+   (company :col-type (or (:varchar 255) :null))
    (description :col-type (:varchar 255))
    (technologies :col-type (:varchar 255))
+   (remote :col-type (or (:char 1) :null))
    (cv :col-type (or cv :null) :references cv)))
 
 ;; A paragraph is a list of elements (e.g. text, links)
@@ -135,18 +136,43 @@
              (json->dao-mapper-hm mapper))
     dao))
 
-;; CREATE TABLES
+;; CREATE/DROP TABLES
 (defun create-table (table-type)
-  "Creates the table as defined in the mito:deftable call of the symbol table-type."
-  (mapc #'mito:execute-sql (mito:table-definition table-type))
-  (mito:ensure-table-exists table-type))
+  "Creates the table of given type."
+  (restart-case
+      (when (not (mito.db:table-exists-p *connection*
+                                         (mito.class:table-name (find-class table-type))))
+        (format t "~&CREATE TABLE: ~A" table-type)
+        (mapc #'mito:execute-sql (mito:table-definition table-type))
+        (mito:ensure-table-exists table-type)
+        t)
+    (skip () nil)))
+
+(defun drop-table (table-type)
+  "Drops table of given type."
+  (restart-case
+      (when (mito.db:table-exists-p *connection*
+                                    (mito.class:table-name (find-class table-type)))
+        (format t "~&DROP TABLE: ~A" table-type)
+        (mito:execute-sql (sxql:drop-table table-type))
+        t)
+    (skip () nil)))
+
+(defparameter all-tables '(contact
+                           paragraph-element
+                           reading
+                           work-experience
+                           cv))
 
 (defun create-tables ()
-  (create-table 'contact)
-  (create-table 'paragraph-element)
-  (create-table 'reading)
-  (create-table 'work-experience)
-  (create-table 'cv))
+  (mapcar #'create-table all-tables))
+
+(defun drop-tables ()
+  (mapcar #'drop-table all-tables))
+
+(defun reset-db-tables ()
+  (drop-tables)
+  (create-tables))
 
 ;;; RETRIEVE CV
 (defun retrieve-cv (cv-id)

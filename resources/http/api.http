@@ -8,7 +8,7 @@ GET :api/api-doc
 GET :api/home
 
 # GET A CV BY ID
-GET :api/wcv/newline357
+GET :api/wcv/46
 
 # CREATE DUMB CV
 POST :api/cv
