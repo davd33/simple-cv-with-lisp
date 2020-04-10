@@ -1,9 +1,8 @@
 (in-package #:services)
 
-(defun get-cv (cv-title)
+(defun get-cv (cv-id)
   "Retrieves CV in DB by title."
-  (handler-case (let* ((cv-dao (first (dao:retrieve-cv cv-title)))
-                       (cv-id (slot-value cv-dao 'mito.dao.mixin::id))
+  (handler-case (let* ((cv-dao (first (dao:retrieve-cv cv-id)))
 
                        (work-experience-dto (mapcar (mop:make-mapper
                                                          dao:work-experience
@@ -58,7 +57,7 @@
                   cv-dto)
 
     (dbi.error:<dbi-database-error> (e)
-      (format t "~&error while retrieving CV '~A': ~A" cv-title e)
+      (format t "~&error while retrieving CV '~A': ~A" cv-id e)
       (format nil "ERROR DB: ~A" e))))
 
 (defun store-cv (contact-json

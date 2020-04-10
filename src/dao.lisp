@@ -149,7 +149,13 @@
   (create-table 'cv))
 
 ;;; RETRIEVE CV
-(defun retrieve-cv (cv-title)
+(defun retrieve-cv (cv-id)
+  (mito:select-dao 'cv
+    (mito:includes 'contact)
+    (sxql:where (:= :id cv-id))
+    (sxql:limit 1)))
+
+(defun retrieve-cv-by-title (cv-title)
   (mito:select-dao 'cv
     (mito:includes 'contact)
     (sxql:where (:like :title cv-title))))

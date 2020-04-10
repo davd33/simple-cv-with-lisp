@@ -17,6 +17,7 @@
   (build-spinneret-html-response (be-it:index)))
 
 (defroute wcv
-  (:get "text/html" cv-name)
-  (build-spinneret-html-response (be-it:cv->html (str:downcase cv-name)
-                                                 (services:get-cv (str:downcase cv-name)))))
+  (:get "text/html" cv-id)
+  (build-spinneret-html-response (let ((cv (services:get-cv cv-id)))
+                                   (be-it:cv->html (dto:title cv)
+                                                   cv))))
