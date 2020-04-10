@@ -68,230 +68,143 @@
     ,@attrs
     ,@text))
 
-(deftag reading (body attrs &key title image-path ext-link)
-  `(:a.book-card
-    :style (css
-             (:width "200px")
-             (:margin "10px")
-             (:text-align :center)
-             (:color "#222")
-             (:text-decoration :none))
-    :href (or ext-link "#")
-    :title ,title
-    (:img :width 130
-          :style (css
-                   (:margin "0 auto")
-                   (:background :darkblue))
-          :src (str:concat "/images/" ,image-path))))
+(deftag reading (body attrs &key reading)
+  "Displays a DTO:READING-DTO."
+  `(with-slots ((title dto:title)
+                (image-path dto:image)
+                (external-url dto:external-url)) ,reading
 
-(deftag paragraph (body attrs &key paragraph-dto)
+     (:a.book-card
+      :style (css
+               (:width "200px")
+               (:margin "10px")
+               (:text-align :center)
+               (:color "#222")
+               (:text-decoration :none))
+      :href (or external-url "#")
+      :title title
+      (:img :width 130
+            :style (css
+                     (:margin "0 auto")
+                     (:background :darkblue))
+            :src (str:concat "/images/" image-path)))))
+
+(deftag paragraph (body attrs &key paragraph-dto black-mode)
   "Displays a DTO:PARAGRAPH-DTO."
   `(with-slots ((pels dto:elements)) ,paragraph-dto
      (reduce
       #'(lambda (a pel)
-          (cons (:span (dto:content pel))
-                a))
+          (let ((content (handler-case (json:decode-json-from-string (dto:content pel))
+                           (json:json-syntax-error () (dto:content pel)))))
+            (cons (if (listp content)
+                      (cond
+                        ((equalp :link (first content)) (link
+                                                          :style (css (:margin "0"))
+                                                          :href (third content)
+                                                          (second content))))
+                      (:span content))
+                  a)))
       (sort pels #'< :key #'dto:order)
       :initial-value (:p))))
 
-(deftag work-experience (body attrs &key title duration desc technologies ref company remote?)
+(deftag work-experience (body attrs &key work-experience)
   "Displays a work experience."
-  `(:div.card
-    (when remote? (:i :style (css (:float :right)) :title "remote position" :class "fal fa-wifi"))
-    (:h1 ,title
-         (when ,ref (link :class "work-reference" :href ref "SEE REFERENCE")))
-    (:h4 ,company)
-    (:em ,duration)
-    (:p ,desc)
-    (:div.card-tags
-     (loop for tech in ,technologies
-           collect (:div.card-tag tech)))
-    ,@body))
+  `(with-slots ((title dto:title)
+                (company dto:company)
+                (desc dto:description)
+                ;; (duration dto:duration)
+                ;; (remote? dto:remote?)
+                ;; (ref dto:reference)
+                (technologies dto:technologies)) ,work-experience
 
-(deftag repeat (template attrs &key for-lang direct-mode)
+     (let ((technologies (str:split "," technologies)))
+
+       (:div.card
+        ;; (when remote? (:i :style (css (:float :right))
+        ;;                   :title "remote position"
+        ;;                   :class "fal fa-wifi"))
+        (:h1 title
+             ;; (when ,ref (link :class "work-reference" :href ref "SEE REFERENCE"))
+             )
+        (:h4 company)
+        ;; (:em duration)
+        (:p desc)
+        (:div.card-tags
+         (loop for tech in technologies
+            collect (:div.card-tag tech)))
+        ,@body))))
+
+(deftag repeat (template attrs &key for)
   "This is a tag that repeats a given template using the key
 for a translation split into a list of several strings.
-  - for-lang: lang-binding-form: 2 elements list with var name and translation key
-  - template: a single form (one list of potentially embedded tags)
-  - direct-mode: when not nil, for-lang designate the value to iterate over"
-  (let ((var-name (first for-lang))
-        (lang-key-or-value (second for-lang)))
+  - for: lang-binding-form: 2 elements list with var name and translation key
+  - template: a single form (one list of potentially embedded tags)"
+  `(reduce #'(lambda (acc elt)
+               (append
+                acc
+                (let ((,(caadr for) elt))
+                  ,@template)))
+           ,@(cdadr for)
+           :initial-value `(progn)))
 
-    (reduce #'(lambda (tag-product translation-value)
-                (append
-                 tag-product
-                 `((let ((,var-name ,translation-value))
-                     ,@template))))
-            (if (null direct-mode)
-                (lang-get lang-key-or-value)
-                lang-key-or-value)
-            :initial-value `(progn))))
+(defun cv->html (cv-title cv)
+  (with-page (:title cv-title)
+    (labels ((paragraphs-by-section-title (sections title)
+               "Find a DTO:SECTION-DTO in a list of sections by DTO:TITLE."
+               (dto:paragraphs (find title sections
+                                     :key #'dto:title :test #'string=))))
 
-(defun index ()
-  (with-page (:title *page-title*)
-    (:section.contact                   ; CONTACT & LANG
-     (let ((my-mail (lang-get :contact.mail)))
-       (link :href (str:concat "mailto:" my-mail) my-mail))
-     (link :href (lang-get :contact.github) "Github")
-     (link :href (lang-get :contact.linkedin) "Linkedin")
-     (link :href (lang-get :contact.fork-project) "(fork-me!)")
-     (:span :class "pdf-download-link"
-            (link :href "/pdf/cv.david-rueda.pdf" "PDF"))
-     (:section.lang-flags
-      (:em "Speaks: Fr / En / Sp / De")))
-    (:header.centered                   ; CV TITLE - MY NAME BASICALLY...
-     (:img
-      :class "cv-img"
-      :src "/images/my.jpg"
-      :alt (lang-get :cv.pic.img.alt))
-     (:h1 (lang-get :cv.title))
-     (:h2 (lang-get :cv.sub-title))
-     (:section                          ; ABOUT ME
-      (repeat
-        :for-lang (about-me :about.me.txt.p)
-        (:p.about-me about-me))))
-    (:h1.centered.dark-title "Work Experiences")
-    (:section.work-exp-cards            ; WORK EXPERIENCE
-     (repeat
-       :for-lang (my-exps :work.experience)
-       (destructuring-bind (&key title ref company desc duration technologies remote?)
-           my-exps
-         (work-experience
-           :title title
-           :ref ref
-           :company company
-           :duration duration
-           :desc desc
-           :technologies technologies))))
-    (:h1.centered "Reading")
-    (:section.books :id "books-section" ; BOOKS THAT I READ
-                    (:div.books
-                     :style (css
-                              (:display :flex)
-                              (:margin-bottom "50px")
-                              (:flex-wrap :wrap)
-                              (:justify-content :center)
-                              (:align-items :baseline))
-                     (repeat :for-lang (books-read :reading)
-                       (destructuring-bind (&key title image-path ext-link)
-                           books-read
-                         (reading :title title
-                           :ext-link ext-link
-                           :image-path image-path)))))
-    (:h1.centered.dark-title "When I discovered Lisp")
-    (:section.lisp-experience           ; LISP EXPERIENCE
-     (repeat :for-lang (paragraph :my-experience-with-lisp)
-       (reduce #'(lambda (acc curr)     ; TODO create a function
-                   (cons (or (progn
-                               (when (listp curr)
-                                 (cond
-                                   ((equalp :link (first curr)) (link
-                                                                  :style (css (:margin "0"))
-                                                                  :href (third curr)
-                                                                  (second curr))))))
-                             (:span curr))
-                         acc))
-               paragraph
-               :initial-value (:p))))))
+      ;; TOP BAND INFORMATION
+      (with-slots ((co-mail dto:mail)
+                   (co-github dto:github)
+                   (co-linkedin dto:linkedin)) (dto:contact cv)
 
-(defun cv->html (cv-name)
-  (labels ((paragraphs-by-section-title (sections title)
-             "Find a DTO:SECTION-DTO in a list of sections by DTO:TITLE."
-             (dto:paragraphs (find title sections
-                                   :key #'dto:title :test #'string=))))
+        (:section.contact
+         (link :href (str:concat "mailto:" co-mail) co-mail)
+         (link :href co-github "Github")
+         (link :href co-linkedin "Linkedin")
+         (link :href "https://github.com/davd33/simple-cv-with-lisp" "(fork-me!)")
+         (:span :class "pdf-download-link"
+                (link :href "/pdf/cv.david-rueda.pdf" "PDF"))
+         (:section.lang-flags
+          (:em "Speaks: Fr / En / Sp / De"))))
 
-    (with-slots ((cv-title dto:title)
-                 (cv-sub-title dto:sub-title)
-                 (cv-img-desc dto:image-description)
-                 (cv-contact dto:contact)
-                 (cv-sections dto:sections)
-                 (cv-we dto:work-experiences)) (services:get-cv cv-name)
+      ;; CV TITLE - IMAGE - INTRODUCTION
+      (:header.centered
+       (:img
+        :class "cv-img"
+        :src "/images/my.jpg"
+        :alt (dto:image-description cv))
+       (:h1 cv-title)
+       (:h2 (dto:sub-title cv))
+       (:section
+        (repeat
+          :for (about-me (paragraphs-by-section-title (dto:sections cv) "about.me.txt.p"))
+          (paragraph :paragraph-dto about-me))))
 
-      (with-slots ((we-title dto:title)
-                   (we-company dto:company)
-                   (we-description dto:description)
-                   (we-duration dto:duration)
-                   (we-technologies dto:technologies)) cv-we
+      ;; WORK EXPERIENCE
+      (:h1.centered.dark-title "Work Experiences")
+      (:section.work-exp-cards
+       (repeat
+         :for (we (dto:work-experiences cv))
+         (work-experience :work-experience we)))
 
-        (with-slots ((co-mail dto:mail)
-                     (co-github dto:github)
-                     (co-linkedin dto:linkedin)) cv-contact
+      ;; BOOKS THAT I READ
+      (:h1.centered "Reading")
+      (:section.books :id "books-section"
+                      (:div.books
+                       :style (css
+                                (:display :flex)
+                                (:margin-bottom "50px")
+                                (:flex-wrap :wrap)
+                                (:justify-content :center)
+                                (:align-items :baseline))
+                       (repeat :for (reading (dto:readings cv))
+                               (reading :reading reading))))
 
-          (with-page (:title cv-title)
-
-            ;; CONTACT & LANG
-            (:section.contact
-             (link :href (str:concat "mailto:" co-mail) co-mail)
-             (link :href co-github "Github")
-             (link :href co-linkedin "Linkedin")
-             (link :href "https://github.com/davd33/simple-cv-with-lisp" "(fork-me!)")
-             (:span :class "pdf-download-link"
-                    (link :href "/pdf/cv.david-rueda.pdf" "PDF"))
-             (:section.lang-flags
-              (:em "Speaks: Fr / En / Sp / De")))
-
-            ;; CV TITLE - MY NAME BASICALLY...
-            (:header.centered
-             (:img
-              :class "cv-img"
-              :src "/images/my.jpg"
-              :alt cv-img-desc)
-             (:h1 cv-title)
-             (:h2 cv-sub-title)
-
-             ;; ABOUT ME
-             (:section
-              (repeat
-                :for-lang (about-me (paragraphs-by-section-title sections "about.me.txt.p"))
-                (paragraph :paragraph-dto about-me))))
-            (:h1.centered.dark-title "Work Experiences")
-            (:section.work-exp-cards      ; WORK EXPERIENCE
-             (repeat
-               :for-lang (my-exps :work.experience)
-               (destructuring-bind (&key title ref company desc duration technologies remote?)
-                   my-exps
-                 (work-experience
-                   :title title
-                   :ref ref
-                   :company company
-                   :duration duration
-                   :desc desc
-                   :technologies technologies))))
-            (:h1.centered "Reading")
-            (:section.books :id "books-section" ; BOOKS THAT I READ
-                            (:div.books
-                             :style (css
-                                      (:display :flex)
-                                      (:margin-bottom "50px")
-                                      (:flex-wrap :wrap)
-                                      (:justify-content :center)
-                                      (:align-items :baseline))
-                             (repeat :for-lang (books-read :reading)
-                                     (destructuring-bind (&key title image-path ext-link)
-                                         books-read
-                                       (reading :title title
-                                                :ext-link ext-link
-                                                :image-path image-path)))))
-            (:h1.centered.dark-title "When I discovered Lisp")
-            (:section.lisp-experience     ; LISP EXPERIENCE
-             (repeat :for-lang (paragraph :my-experience-with-lisp)
-                     (reduce #'(lambda (acc curr) ; TODO create a function
-                                 (cons (or (progn
-                                             (when (listp curr)
-                                               (cond
-                                                 ((equalp :link (first curr)) (link
-                                                                                :style (css (:margin "0"))
-                                                                                :href (third curr)
-                                                                                (second curr))))))
-                                           (:span curr))
-                                       acc))
-                             paragraph
-                             :initial-value (:p))))))))))
-
-(defun save ()
-  (let ((linode-html-file-path "/home/davd/linode/var/www/localhost/htdocs/index.html")
-        (project-html-file-path "/home/davd/clisp/be-it/src/my-cv.html"))
-    (with-open-file (cv-file linode-html-file-path :direction :output
-                                                   :if-exists :supersede)
-      (let ((spinneret:*html* cv-file))
-        (index)))))
+      ;; LISP EXPERIENCE
+      (:h1.centered.dark-title "When I discovered Lisp")
+      (:section.lisp-experience
+       (repeat :for (lisp (paragraphs-by-section-title (dto:sections cv)
+                                                       "my-experience-with-lisp"))
+               (paragraph :paragraph-dto lisp))))))

@@ -122,10 +122,7 @@
 
 (defpackage #:be-it
   (:use #:cl #:spinneret)
-  (:export #:save
-           #:index
-           #:with-page
-           #:cv->html))
+  (:export #:cv->html))
 
 (defpackage #:dev.mocks
   (:use #:cl)
