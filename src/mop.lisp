@@ -1,5 +1,21 @@
 (in-package #:mop)
 
+(defun find-class-slots (class-symbol)
+  "Return the list of slots for CLASS-SYMBOL."
+  (funcall (alexandria:compose #'(lambda (slots)
+                                   (mapcar #'(lambda (elt)
+                                               (closer-mop:slot-definition-name elt))
+                                           slots))
+                               #'closer-mop:class-slots
+                               #'find-class)
+           class-symbol))
+
+(defun class-slots (class-symbol)
+  "Return the list of slot definitions for CLASS-SYMBOL."
+  (funcall (alexandria:compose #'closer-mop:class-slots
+                               #'find-class)
+           class-symbol))
+
 (defmacro defprintobj (class-symbol)
   "Give me a class symbol and I will defmethod a print-object that format every bound field!"
   (let* ((slot-names-fn (alexandria:compose #'(lambda (slots)
