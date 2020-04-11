@@ -18,9 +18,6 @@
                                                                 (get-in json (intern (string name) "KEYWORD")))))
                                         (mop:class-slots class-symbol))
        do
-         (format t "~&TYPE = ~A~%" type)
-         (format t "~&SLOT = ~A~%" slot)
-         (format t "~&VALUE = ~A~%" value)
          (when (not (and (contains-slot-p json slot)
                        (if (listp value)
                            (type-compatible-p value type)

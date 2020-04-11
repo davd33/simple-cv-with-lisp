@@ -7,7 +7,8 @@
 (defpackage #:jsons
   (:use #:cl)
   (:export #:get-in
-           #:add-value))
+           #:add-value
+           #:type-compatible-p))
 
 (defpackage #:hm
   (:use #:cl)

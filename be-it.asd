@@ -38,12 +38,13 @@
   :in-order-to ((test-op (test-op "be-it/tests"))))
 
 (defsystem "be-it/tests"
-  :author ""
-  :license ""
+  :author "David Rueda"
+  :license "GPLv3"
   :depends-on ("be-it"
                "rove")
   :components ((:module "tests"
                 :components
-                ((:file "main"))))
+                ((:file "main")
+                 (:file "jsons"))))
   :description "Test system for be-it"
   :perform (test-op (op c) (symbol-call :rove :run c)))
