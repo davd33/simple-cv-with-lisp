@@ -121,7 +121,8 @@
 (defpackage #:api
   (:use #:cl #:snooze #:jsons #:alexandria)
   (:export #:start
-           #:stop))
+           #:stop
+           #:cv-handler))
 
 (defpackage #:be-it
   (:use #:cl #:spinneret)
@@ -130,7 +131,8 @@
 (defpackage #:dev.mocks
   (:use #:cl)
   (:export #:api-cv
-           #:home))
+           #:home
+           #:basic-cv))
 
 (defpackage #:web-site
   (:use #:cl #:snooze #:jsons #:alexandria #:spinneret)

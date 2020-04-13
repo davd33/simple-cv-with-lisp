@@ -44,7 +44,7 @@
                "rove")
   :components ((:module "tests"
                 :components
-                ((:file "main")
-                 (:file "jsons"))))
+                ((:file "jsons")
+                 (:file "api-handlers"))))
   :description "Test system for be-it"
   :perform (test-op (op c) (symbol-call :rove :run c)))

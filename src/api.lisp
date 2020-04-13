@@ -6,10 +6,9 @@
 
 (setf snooze:*catch-errors* :verbose)
 
-(defroute cv
-  (:post "application/json")
+(defun cv-handler (payload-as-string)
   (let* ((json (handler-case
-                   (json:decode-json-from-string (payload-as-string))
+                   (json:decode-json-from-string payload-as-string)
                  (error (e)
                    (http-condition 400 "Malformed JSON (~A)!" e)))))
     (services:store-cv (get-in json :contact)
@@ -17,6 +16,10 @@
                        (get-in json :work-experiences)
                        (get-in json :paragraphs)
                        json)))
+
+(defroute cv
+  (:post "application/json")
+  (cv-handler (payload-as-string)))
 
 
 ;;; UTILITY
