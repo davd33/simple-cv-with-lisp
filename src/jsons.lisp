@@ -7,7 +7,9 @@
 
 (defun type-compatible-p (json class-symbol &optional array-p)
   "Return T if JSON is compatible with CLASS.
-If ARRAY-P is T then checks TYPE-COMPATIBLE-P for each element of JSON."
+If ARRAY-P is T then checks TYPE-COMPATIBLE-P for each element of JSON.
+In order to manage fields that take on lists of objects, the name of the
+field must end with '-list'."
   (if array-p
       (loop
          for elt in json
@@ -37,7 +39,9 @@ If ARRAY-P is T then checks TYPE-COMPATIBLE-P for each element of JSON."
                                                            (return-from type-compatible-p nil))))))
                      (mop:class-slots class-symbol))
            do
-             (when (not (and (contains-slot-p json slot)
+             (when (not (and (or (str:ends-with? (str:upcase "-o")
+                                                 (str:upcase (string slot)))
+                                 (contains-slot-p json slot))
                              (if (listp value)
                                  (type-compatible-p value type
                                                     (str:ends-with? (str:upcase "-list")

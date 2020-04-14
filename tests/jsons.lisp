@@ -15,6 +15,7 @@
 (defclass acar ()
   ((size :type integer)
    (color :type color)
+   radio-o
    (wheel-list :type wheel)))
 
 (defpackage be-it/tests/jsons
@@ -40,7 +41,7 @@
   (jsons:type-compatible-p
    (json:decode-json-from-string json-string) 'be-it/tests/jsons-dtos:wheel))
 
-(defparameter acar-ok "{\"size\":12,\"wheel-list\":[{\"radius\":10}],\"color\":{\"r\":12,\"g\":233,\"b\":2}}")
+(defparameter acar-ok "{\"size\":12,\"radio-o\":\"y\",\"wheel-list\":[{\"radius\":10}],\"color\":{\"r\":12,\"g\":233,\"b\":2}}")
 
 (defparameter awheel-ok "{\"radius\":12}")
 
@@ -58,4 +59,6 @@
   (testing "a JSON object could simply be an array of objects!"
     (ok (type-comp-acar[]? acar-array-ok)))
   (testing "this json should have been an array!"
-    (ok (not (type-comp-acar[]? "{\"size\":12,\"wheel-list\":[{\"radius\":10}],\"color\":{\"r\":12,\"g\":233,\"b\":2}}")))))
+    (ok (not (type-comp-acar[]? "{\"size\":12,\"wheel-list\":[{\"radius\":10}],\"color\":{\"r\":12,\"g\":233,\"b\":2}}"))))
+  (testing "it's ok to miss an optional field (e.g. field-o)"
+    (ok (type-comp-acar? "{\"size\":12,\"wheel-list\":[{\"radius\":10}],\"color\":{\"r\":12,\"g\":233,\"b\":2}}"))))
