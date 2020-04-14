@@ -11,6 +11,7 @@
                    (json:decode-json-from-string payload-as-string)
                  (error (e)
                    (http-condition 400 "Malformed JSON (~A)!" e)))))
+
     (services:store-cv (get-in json :contact)
                        (get-in json :readings)
                        (get-in json :work-experiences)
