@@ -15,7 +15,7 @@
     (services:store-cv (get-in json :contact)
                        (get-in json :reading-list)
                        (get-in json :work-experience-list)
-                       (get-in json :paragraph-list)
+                       (get-in json :section-list)
                        json)))
 
 (defroute cv

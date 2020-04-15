@@ -83,7 +83,7 @@ Example:
 (defpost store-cv () ((contact-json 'dto:contact-dto)
                       (readings-json 'dto:reading-dto t)
                       (work-experiences-json 'dto:work-experience-dto t)
-                      (paragraphs-json 'dto:paragraph-element-dto t)
+                      (section-list-json 'dto:section-dto t)
                       (cv-json 'dto:cv-dto))
     "Store a CV in DB."
   (handler-case (let* ((contact (dao:insert-contact contact-json))
@@ -99,16 +99,21 @@ Example:
                                               (dao:insert-work-experience
                                                (alists:aconses we `(:cv ,cv)))))
 
-                       (paragraph-elements (loop for p in paragraphs-json
+                       (paragraph-elements (loop for section in section-list-json
                                               collect
-                                                (loop for p-elt in (get-in p :elements)
-                                                   collect
-                                                     (dao:insert-paragraph-element
-                                                      (alists:aconses p-elt
-                                                                      `(:section ,(get-in p :section))
-                                                                      `(:content ,(json:encode-json-to-string
-                                                                                   (get-in p-elt :content)))
-                                                                      `(:cv ,cv))))))
+                                                (let ((section-title (get-in section :title)))
+                                                  (loop for p in (get-in section :paragraph-list)
+                                                     collect
+                                                       (let ((p-title (get-in p :title)))
+                                                         (loop for p-elt in (get-in p :element-list)
+                                                           collect
+                                                             (dao:insert-paragraph-element
+                                                              (alists:aconses p-elt
+                                                                              `(:section ,section-title)
+                                                                              `(:paragraph ,p-title)
+                                                                              `(:content ,(json:encode-json-to-string
+                                                                                           (get-in p-elt :content)))
+                                                                              `(:cv ,cv)))))))))
 
                        (response (acons :command "create-cv" nil))
 
