@@ -1,13 +1,13 @@
 (in-package #:dao)
 
 (defparameter *connection* nil)
-(defun connect ()
+(defun connect (&optional (db-name "be_it") (username "postgres") (password "helloworld"))
   (when (null *connection*)
     (setf *connection*
           (mito:connect-toplevel :postgres
-                                 :database-name "be_it"
-                                 :username "postgres"
-                                 :password "helloworld"))))
+                                 :database-name db-name
+                                 :username username
+                                 :password password))))
 
 ;; TABLE DEFINITIONS
 ;; Contact information
