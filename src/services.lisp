@@ -97,12 +97,8 @@ Example:
                        (work-experiences (loop for we in work-experiences-json
                                             collect
                                               (dao:insert-work-experience
-                                               (alists:aconses we
-                                                               `(:technologies
-                                                                 ,(format nil
-                                                                          "~{~A~^,~}"
-                                                                          (get-in we :technologies)))
-                                                               `(:cv ,cv)))))
+                                               (alists:aconses we `(:cv ,cv)))))
+
                        (paragraph-elements (loop for p in paragraphs-json
                                               collect
                                                 (loop for p-elt in (get-in p :elements)
@@ -112,22 +108,23 @@ Example:
                                                                       `(:section ,(get-in p :section))
                                                                       `(:content ,(json:encode-json-to-string
                                                                                    (get-in p-elt :content)))
-                                                                      `(:cv ,cv)))))))
-                  (let* ((response (acons :command "create-cv" nil))
-                         (response (when readings
-                                     (jsons:add-value (length readings) response
-                                                      :created :readings)))
-                         (response (when work-experiences
-                                     (jsons:add-value (length work-experiences) response
-                                                      :created :work-experiences)))
-                         (response (when paragraph-elements
-                                     (jsons:add-value (length paragraph-elements) response
-                                                      :created :paragraphs-elements)))
-                         (response (when cv
-                                     (jsons:add-value (slot-value cv 'mito.dao.mixin::id)
-                                                      response
-                                                      :created :cv-id))))
-                    (json:encode-json-alist-to-string response)))
+                                                                      `(:cv ,cv))))))
+
+                       (response (acons :command "create-cv" nil))
+
+                       (response (jsons:add-value (length readings) response
+                                                  :created :readings))
+
+                       (response (jsons:add-value (length work-experiences) response
+                                                  :created :work-experiences))
+
+                       (response (jsons:add-value (length paragraph-elements) response
+                                                  :created :paragraphs-elements))
+                       (response (jsons:add-value (slot-value cv 'mito.dao.mixin::id)
+                                                  response
+                                                  :created :cv-id)))
+
+                  (json:encode-json-alist-to-string response))
     (dbi.error:<dbi-database-error> (e)
       (format t "~&error during CV creation: ~A" e)
       (format nil "ERROR DB: ~A" e))))

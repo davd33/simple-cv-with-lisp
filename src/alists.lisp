@@ -32,7 +32,6 @@
                      value) then (if (< end len-f)
                                      (acons f res nil)
                                      res)
-       do (format t "~&f = ~A~%" f)
        finally (return (acons f res alist)))))
 
 (defun aconses (alist &rest fields)

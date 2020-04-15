@@ -19,14 +19,22 @@
           :accessor title
           :type string
           :documentation "Title of the work experience.")
-   (company-o :initarg :company
-            :accessor company
-            :type string
-            :documentation "Company for which you worked.")
+   (company-o :initarg :company-o
+              :accessor company-o
+              :type string
+              :documentation "Company for which you worked.")
    (description :initarg :description
                 :accessor description
                 :type string
                 :documentation "Description of the work done.")
+   (ref-o :initarg :ref-o
+          :accessor ref-o
+          :type string
+          :documentation "Reference from the company.")
+   (remote-o :initarg :remote-o
+             :accessor remote-o
+             :type string
+             :documentation "Remote (true/false) work flag.")
    (duration :initarg :duration
              :accessor duration
              :type string
@@ -60,7 +68,11 @@
             :documentation "Contents can be a string or an alist (JSON object).")))
 
 (defclass paragraph-dto ()
-  ((element-list :initarg :element-list
+  ((title :initarg :title
+          :accessor title
+          :type string
+          :documentation "Title for the paragraph.")
+   (element-list :initarg :element-list
                  :accessor element-list
                  :type paragraph-element-dto
                  :documentation "List of paragraph elements that compose this paragraph.")))

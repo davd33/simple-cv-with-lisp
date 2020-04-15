@@ -42,7 +42,7 @@ field must end with '-list'."
              (when (not (and (or (str:ends-with? (str:upcase "-o")
                                                  (str:upcase (string slot)))
                                  (contains-slot-p json slot))
-                             (if (listp value)
+                             (if (and (not (null value)) (listp value))
                                  (type-compatible-p value type
                                                     (str:ends-with? (str:upcase "-list")
                                                                     (str:upcase (string slot))))

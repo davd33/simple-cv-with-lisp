@@ -13,9 +13,9 @@
                    (http-condition 400 "Malformed JSON (~A)!" e)))))
 
     (services:store-cv (get-in json :contact)
-                       (get-in json :readings)
-                       (get-in json :work-experiences)
-                       (get-in json :paragraphs)
+                       (get-in json :reading-list)
+                       (get-in json :work-experience-list)
+                       (get-in json :paragraph-list)
                        json)))
 
 (defroute cv
