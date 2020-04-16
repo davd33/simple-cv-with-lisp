@@ -1,8 +1,4 @@
-* Be-It
+#+TITLE: CV Management application
 
-** Usage
-
-   Simply call the [[file:deploy.sh][Deploy script]].
-   There is no parameters yet, it's not finished... Actually the Lisp script needs
-   to be parameterized as well so that the destination cv html file can be changed
-   before execution.
+Create  and   manage  you  CV  information   and  connect/update  your
+information to all other plateform online.

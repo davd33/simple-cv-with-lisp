@@ -1,8 +1,12 @@
 * Tasks
 ** TODO Add a User Manual
 
-   Write a manual on how to use the =lang.en.lisp= translation file, so that people
-   know exactly what data structures the CV template expects.
+   Write a manual on how to start the application and use the app.
+   Document all features:
+    - POST CV to API
+    - Create CV through GUI
+    - Install and start the server
+    - Install and start standalone client that embeds the server...
 
 ** TODO Add project's dependencies in org file
 
@@ -19,16 +23,28 @@
    Make the titles  of every section dynamic,  so that they can be  set from within
    the translation file.
 
-** TODO Run server and create POST route
+** DONE Run server and create POST route
+<2020-04-10 ven.>
 
    (clack:clackup (snooze:make-clack-app) :port 9003)
 
-** TODO Write tests for #:SERVICES
+** TODO Testing
+*** TODO SERVICES:STORE-CV
 
-   Need to  write good tests  for package #:SERVICES so  that refactoring
-   doesn't break current working features.
+**** DONE CV created with correct values from json string
+<2020-04-16 jeu.>
 
-** TODO Service - create cv
+**** TODO Check error response from API when json INPUT not correct
+
+*** DONE JSONS:TYPE-COMPATIBLE
+
+**** DONE Ensure common discrepencies the function must check for
+<2020-04-14 mar.>
+
+** DONE Service - create cv
+<2020-04-15 mer.>
 
    Ensure data structure of received JSON.
    Needs to ensure that the mandatory fields are there.
+
+** TODO Create a standalone App
