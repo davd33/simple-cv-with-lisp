@@ -100,20 +100,19 @@ Example:
                                                (alists:aconses we `(:cv ,cv)))))
 
                        (paragraph-elements (loop for section in section-list-json
-                                              collect
+                                              append
                                                 (let ((section-title (get-in section :title)))
                                                   (loop for p in (get-in section :paragraph-list)
-                                                     collect
+                                                     append
                                                        (let ((p-title (get-in p :title)))
                                                          (loop for p-elt in (get-in p :element-list)
-                                                           collect
-                                                             (dao:insert-paragraph-element
-                                                              (alists:aconses p-elt
-                                                                              `(:section ,section-title)
-                                                                              `(:paragraph ,p-title)
-                                                                              `(:content ,(json:encode-json-to-string
-                                                                                           (get-in p-elt :content)))
-                                                                              `(:cv ,cv)))))))))
+                                                            collect
+                                                              (dao:insert-paragraph-element (alists:aconses p-elt
+                                                                                                            `(:section ,section-title)
+                                                                                                            `(:paragraph ,p-title)
+                                                                                                            `(:content ,(json:encode-json-to-string
+                                                                                                                         (get-in p-elt :content)))
+                                                                                                            `(:cv ,cv)))))))))
 
                        (response (acons :command "create-cv" nil))
 
