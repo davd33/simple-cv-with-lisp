@@ -46,5 +46,7 @@
 
    Ensure data structure of received JSON.
    Needs to ensure that the mandatory fields are there.
-
 ** TODO Create a standalone App
+** TODO Create Electron App
+** TODO Create web page for CV creation (form to fill in)
+** TODO Ensure display of cv works as good as current davd33.org
